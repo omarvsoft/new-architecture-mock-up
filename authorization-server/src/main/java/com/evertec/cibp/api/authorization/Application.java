@@ -3,12 +3,10 @@ package com.evertec.cibp.api.authorization;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -37,23 +35,65 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @SpringBootApplication
-@EnableResourceServer
 @RestController
+@EnableResourceServer
 public class Application {
 	
 	@Autowired
 	private DataSource dataSource;
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+	
+	@RequestMapping("/user")
+    public String user() {
+        return "Hellow";
+    }
 
-	@RequestMapping("/")
-	public String home() {
-		return "Hello World";
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Configuration
+    @Configuration
+    @EnableAuthorizationServer
+    protected static class OAuth2Config extends AuthorizationServerConfigurerAdapter {
+
+        @Autowired
+        private AuthenticationManager authenticationManager;
+        
+        @Autowired
+		private DataSource dataSource;
+        
+        @Bean
+		protected AuthorizationCodeServices authorizationCodeServices() {
+			return new JdbcAuthorizationCodeServices(dataSource);
+		}
+
+
+        @Override
+        public void configure(AuthorizationServerEndpointsConfigurer endpointsConfigurer) throws Exception {
+            //endpointsConfigurer.authenticationManager(authenticationManager);
+        	endpointsConfigurer.authorizationCodeServices(authorizationCodeServices())
+			.authenticationManager(authenticationManager).tokenStore(tokenStore())
+			.approvalStoreDisabled();
+        }
+
+        @Override
+        public void configure(ClientDetailsServiceConfigurer clientDetailsServiceConfigurer) throws Exception {
+            // Using hardcoded inmemory mechanism because it is just an example
+            clientDetailsServiceConfigurer.jdbc(dataSource);
+//                    .withClient("client")
+//                    .secret("clientsecret")
+//                    .authorizedGrantTypes("authorization_code", "refresh_token", "implicit", "password", "client_credentials")
+//                    .scopes("apiAccess");
+        }
+        
+        
+        @Bean
+		public JdbcTokenStore tokenStore() {
+			return new JdbcTokenStore(dataSource);
+		}
+    }
+    
+    @Configuration
 	@EnableResourceServer
 	protected static class ResourceServer extends ResourceServerConfigurerAdapter {
 
@@ -72,70 +112,8 @@ public class Application {
 		}
 
 	}
-
-	@Configuration
-	@EnableAuthorizationServer
-	protected static class OAuth2Config extends AuthorizationServerConfigurerAdapter {
-
-		@Autowired
-		private AuthenticationManager auth;
-
-		@Autowired
-		private DataSource dataSource;
-
-		private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-		@Bean
-		public JdbcTokenStore tokenStore() {
-			return new JdbcTokenStore(dataSource);
-		}
-
-		@Bean
-		protected AuthorizationCodeServices authorizationCodeServices() {
-			return new JdbcAuthorizationCodeServices(dataSource);
-		}
-
-		@Override
-		public void configure(AuthorizationServerSecurityConfigurer security)
-				throws Exception {
-			security.passwordEncoder(passwordEncoder);
-		}
-
-		@Override
-		public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-				throws Exception {
-			endpoints.authorizationCodeServices(authorizationCodeServices())
-					.authenticationManager(auth).tokenStore(tokenStore())
-					.approvalStoreDisabled();
-		}
-
-		@Override
-		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-			// @formatter:off
-			clients.jdbc(dataSource)
-					.passwordEncoder(passwordEncoder)
-				.withClient("my-trusted-client1")
-					.authorizedGrantTypes("password", "authorization_code",
-							"refresh_token", "implicit")
-					.authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-					.scopes("read", "write", "trust")
-					.resourceIds("oauth2-resource")
-					.accessTokenValiditySeconds(60).and()
-				.withClient("my-client-with-registered-redirect")
-					.authorizedGrantTypes("authorization_code")
-					.authorities("ROLE_CLIENT").scopes("read", "trust")
-					.resourceIds("oauth2-resource")
-					.redirectUris("http://anywhere?key=value").and()
-				.withClient("my-client-with-secret")
-					.authorizedGrantTypes("client_credentials", "password")
-					.authorities("ROLE_CLIENT").scopes("read")
-					.resourceIds("oauth2-resource").secret("secret");
-			// @formatter:on
-		}
-
-	}
-
-	@Autowired
+    
+    @Autowired
 	public void init(AuthenticationManagerBuilder auth) throws Exception {
 		// @formatter:off
 			auth.jdbcAuthentication().dataSource(dataSource).withUser("dave")
