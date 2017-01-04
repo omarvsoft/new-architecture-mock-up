@@ -1,0 +1,10 @@
+spring:
+    profiles: development
+    h2:
+      console: 
+        enabled: true
+        path: /console
+server:
+    port: 9090
+    context-path: /authserver
+    
