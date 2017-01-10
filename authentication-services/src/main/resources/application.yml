@@ -1,10 +1,30 @@
-spring:
-    profiles: development
-    h2:
-      console: 
-        enabled: true
-        path: /console
 server:
-    port: 9090
-    context-path: /authserver
-    
+  port: 8081
+  context-path: /authentication
+spring:
+  datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /console 
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      client-id: authentication-services
+      client-secret: auth123
+      access-token-uri: http://localhost:9090/authserver/oauth/token
+      user-authorization-uri: http://localhost:9090/authserver/oauth/authorize
+    resource:
+      user-info-uri: http://localhost:9090/authserver/me
+logging:
+    level:
+        org.springframework.security: DEBUG
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE 
