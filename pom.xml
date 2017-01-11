@@ -97,7 +97,6 @@
 		</dependency>
 		<!-- TEST -->
 	</dependencies>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -150,7 +149,6 @@
 
 		</plugins>
 	</build>
-	
 	<profiles>
 		<profile>
 			<id>test-coverage</id>
