@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>authentication-services-mock-up</artifactId>
+    <artifactId>customer-services-mock-up</artifactId>
 
-	<parent>
-		<groupId>com.evertec.cibp.api</groupId>
-		<artifactId>new-architecture-mock-up</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	
-	<properties>
+    <parent>
+        <groupId>com.evertec.cibp.api</groupId>
+        <artifactId>new-architecture-mock-up</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    
+    <properties>
 		<docker.image.prefix>mi-banco</docker.image.prefix>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-	<dependencies>
-		<dependency>
+
+    <dependencies>
+       <dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-	</dependencies>
-	
-	<build>
-    	<finalName>authentication-services</finalName>
+    </dependencies>  
+    
+    <build>
+    	<finalName>customer-services</finalName>
 		<plugins>
 			<plugin>
                 <groupId>com.spotify</groupId>
@@ -43,7 +43,7 @@
                         <resource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>authentication-services.jar</include>
+                            <include>customer-services.jar</include>
                         </resource>
                     </resources>
                 </configuration>

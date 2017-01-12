@@ -86,17 +86,31 @@ public class OAuth2Configuration {
 		 */
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clientDetailsServiceConfigurer) throws Exception {
-			clientDetailsServiceConfigurer.jdbc(dataSource).passwordEncoder(passwordEncoder).withClient("mi-banco-web")
-					.secret("web123").authorizedGrantTypes("client_credentials")
-					.scopes("api_access", "read:customer_profile", "write:customer_profile").and()
-					.withClient("mi-banco-android").secret("android123").authorizedGrantTypes("client_credentials")
-					.scopes("api_access", "read:customer_profile", "write:customer_profile").and()
-					.withClient("mi-banco-ios").secret("iOS123").authorizedGrantTypes("client_credentials")
-					.scopes("api_access", "read:customer_profile", "write:customer_profile").and()
-					.withClient("authentication-services").secret("auth123")
+			clientDetailsServiceConfigurer.jdbc(dataSource)
+					.passwordEncoder(passwordEncoder).withClient("mi-banco-web")
+					.secret("web123")
+					.authorizedGrantTypes("client_credentials")
+					.scopes("api_access", "read:customer_profile", "write:customer_profile")
+					.authorities("LOGIN","REGISTER")
+					.and()
+					.withClient("mi-banco-android")
+					.secret("android123")
+					.authorizedGrantTypes("client_credentials")
+					.scopes("api_access", "read:customer_profile", "write:customer_profile")
+					.authorities("LOGIN","REGISTER")
+					.and()
+					.withClient("mi-banco-ios")
+					.secret("iOS123")
+					.authorizedGrantTypes("client_credentials")
+					.scopes("api_access", "read:customer_profile", "write:customer_profile")
+					.authorities("LOGIN","REGISTER")
+					.and()
+					.withClient("authentication-services")
+					.secret("auth123")
 					.authorizedGrantTypes("authorization_code", "refresh_token", "implicit", "password",
 							"client_credentials")
-					.scopes("api_access", "read:customer_profile", "write:customer_profile");
+					.scopes("api_access", "read:customer_profile", "write:customer_profile")
+					.authorities("REGAIN");
 		}
 
 		/**
