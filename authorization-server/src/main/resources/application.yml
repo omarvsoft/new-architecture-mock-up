@@ -1,4 +1,5 @@
 server:
+  profiles: docker
   port: 9090
   context-path: /authserver
 spring:
