@@ -9,10 +9,16 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
 
+/**
+ * The Class OAuth2Configuration.
+ */
 @EnableResourceServer
 @Configuration
 public class OAuth2Configuration {
 	
+	/**
+	 * The Class ResourceServerConfiguration.
+	 */
 	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
 		/*
@@ -31,10 +37,16 @@ public class OAuth2Configuration {
 	}
 	
 
+	/**
+	 * The Class MethodSecurityConfiguration.
+	 */
 	@EnableGlobalMethodSecurity(prePostEnabled=true)
 	public static class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
-	  @Override
+	  /* (non-Javadoc)
+  	 * @see org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration#createExpressionHandler()
+  	 */
+  	@Override
 	  protected MethodSecurityExpressionHandler createExpressionHandler() {
 	    return new OAuth2MethodSecurityExpressionHandler();
 	  }

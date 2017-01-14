@@ -6,7 +6,10 @@ import java.sql.Date;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 import com.evertec.cibp.api.authentication.model.SSOToken;
 import com.evertec.cibp.api.authentication.repository.SSOTokenRepository;
@@ -18,6 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @SpringBootApplication
 @EnableSwagger2
+@EnableFeignClients
 public class Application {
 
 	/**
@@ -28,6 +32,11 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+	}
+	
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
 	}
 
 	/**
@@ -42,7 +51,7 @@ public class Application {
 		return (args) -> {
 			sSOTokenRepository
 					.save(new SSOToken("A3FE4A124", "username=encarnacion&accountType=checking", new BigInteger("234"),
-							"", new Date(System.currentTimeMillis()), "http://oao.bancopopular.com", true));
+							"omarvsoft", new Date(System.currentTimeMillis()), "http://oao.bancopopular.com", true));
 		};
 	}
 

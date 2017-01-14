@@ -21,9 +21,15 @@ import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeSe
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
+/**
+ * The Class OAuth2Configuration.
+ */
 @EnableResourceServer
 public class OAuth2Configuration {
 	
+	/**
+	 * The Class OAuth2Config.
+	 */
 	@Configuration
 	@EnableAuthorizationServer
 	protected static class OAuth2Config extends AuthorizationServerConfigurerAdapter {

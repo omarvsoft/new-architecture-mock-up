@@ -5,6 +5,9 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
+/**
+ * The Class SecurityConfiguration.
+ */
 public class SecurityConfiguration {
 	
 	/** The data source. */

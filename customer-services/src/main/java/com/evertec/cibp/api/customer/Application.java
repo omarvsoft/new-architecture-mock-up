@@ -10,6 +10,9 @@ import com.evertec.cibp.api.customer.repository.CustomerRepository;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * The Class Application.
+ */
 @SpringBootApplication
 @EnableSwagger2
 public class Application {
@@ -24,6 +27,12 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 	
+	/**
+	 * Demo.
+	 *
+	 * @param customerRepository the customer repository
+	 * @return the command line runner
+	 */
 	@Bean
 	public CommandLineRunner demo(CustomerRepository customerRepository) {
 		return (args) -> {
