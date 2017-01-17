@@ -13,8 +13,8 @@
     </parent>
     
     <properties>
-		<docker.image.prefix>mi-banco</docker.image.prefix>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<docker.image.user>mi-banco</docker.image.user>
 	</properties>
 
     <dependencies>
@@ -32,7 +32,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.11</version>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                	<!--Docker naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
+                    <imageName>${docker.image.registry}/${docker.image.user}/${project.artifactId}</imageName>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <forceTags>true</forceTags>
                     <imageTags>
@@ -46,6 +47,8 @@
                             <include>authorization-server.jar</include>
                         </resource>
                     </resources>
+                    <!-- Registry using ~/.docker/config.json file for authentication  Hint: The build will fail, if the config file doesn't exist.-->
+					<!-- <useConfigFile>true</useConfigFile> -->
                 </configuration>
             </plugin>
 		</plugins>

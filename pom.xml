@@ -21,6 +21,7 @@
 
 	<properties>
 		<docker.image.prefix>springio</docker.image.prefix>
+		<docker.image.registry>localhost:5000</docker.image.registry>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven.jacoco.plugin.version>0.7.2.201409121644</maven.jacoco.plugin.version>
