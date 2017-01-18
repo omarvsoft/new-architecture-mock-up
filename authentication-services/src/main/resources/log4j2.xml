@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%-5p | %d{yyyy-MM-dd HH:mm:ss} | [%t] %C{2} (%F:%L) - %m%n"/>
+		</Console>
+		 
+		<RabbitMQ name="rabbitmq"
+				  addresses="localhost:5672"
+				  user="guest"
+				  password="guest"
+				  virtualHost="/"
+				  exchange="cibp-log"
+				  applicationId="cibp-authentication"
+				  routingKeyPattern="%X{applicationId}.%c.%p"
+				  contentType="text/plain"
+				  contentEncoding="UTF-8"
+				  generateId="false"
+				  deliveryMode="PERSISTENT"
+				  charset="UTF-8"
+				  senderPoolSize="3"
+				  maxSenderRetries="5">
+			<PatternLayout pattern="%-5p | %d{yyyy-MM-dd HH:mm:ss} | [%t] %C{2} (%F:%L) - %m%n"/>
+		</RabbitMQ>
+		
+	</Appenders>
+	<Loggers>
+
+		<Logger name="com.evertec.cibp.api.authentication.service" level="DEBUG">
+			<AppenderRef ref="rabbitmq" />
+		</Logger>
+		
+		<Root level ="INFO">
+			<AppenderRef ref="STDOUT" />
+		</Root>
+
+	</Loggers>
+</Configuration>
