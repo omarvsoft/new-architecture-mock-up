@@ -1,56 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>customer-services-mock-up</artifactId>
+	<artifactId>customer-services-mock-up</artifactId>
 
-    <parent>
-        <groupId>com.evertec.cibp.api</groupId>
-        <artifactId>new-architecture-mock-up</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
-    
-    <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<docker.image.user>mi-banco</docker.image.user>
+	<parent>
+		<groupId>com.evertec.cibp.api</groupId>
+		<artifactId>new-architecture-mock-up</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<!--In order to change the version of spring-boot or spring-cloud, you should 
+		OVERRIDE the following properties from the parent pom 
+		<springframework.boot.version/> 
+		<springframework.cloud.version/> 
+	-->
+	<properties>
+		<project.build.finalName>customer-services</project.build.finalName>
 	</properties>
 
-    <dependencies>
-       <dependency>
+	<dependencies>
+		<dependency>
+			<groupId>com.evertec.cibp.dependencies</groupId>
+			<artifactId>common-dependencies</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-    </dependencies>  
-    
-    <build>
-    	<finalName>customer-services</finalName>
-		<plugins>
-			<plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.11</version>
-                <configuration>
-                    <!--Docker naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
-                    <imageName>${docker.image.registry}/${docker.image.user}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <forceTags>true</forceTags>
-                    <imageTags>
-                    	<imageTag>${project.version}</imageTag>
-                    	<imageTag>latest</imageTag>
-                    </imageTags>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>customer-services.jar</include>
-                        </resource>
-                    </resources>
-                    <!-- Registry using ~/.docker/config.json file for authentication  Hint: The build will fail, if the config file doesn't exist.-->
-					<!-- <useConfigFile>true</useConfigFile> -->
-                </configuration>
-            </plugin>
-		</plugins>
-	</build>
+	</dependencies>
+
 </project>
