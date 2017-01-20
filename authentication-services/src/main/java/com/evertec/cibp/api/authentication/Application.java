@@ -11,7 +11,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import com.evertec.cibp.api.authentication.model.SSOToken;
+import com.evertec.cibp.api.authentication.model.domain.SSOToken;
 import com.evertec.cibp.api.authentication.repository.SSOTokenRepository;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;

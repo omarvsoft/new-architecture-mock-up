@@ -1,20 +1,13 @@
-package com.evertec.cibp.api.authentication.model;
+package com.evertec.cibp.api.sdk.common.model.domain;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 /**
  * The Class SSOToken.
  */
-@Entity
-@Table(name = "SSO_TOKEN")
+
 public class SSOToken implements Serializable {
 	
 	/** The Constant serialVersionUID. */
@@ -32,35 +25,27 @@ public class SSOToken implements Serializable {
     };
     
     /** The status. */
-    @Transient
     private Status status;
     
     /** The return url. */
-    @Column(name="RETURN_URL")
     private String returnUrl;
     
     /** The reference data. */
-    @Column(name="REFERENCE_DATA")
     private String referenceData;
     
     /** The perm id. */
-    @Column(name="PERM_ID")
     private BigInteger permId;
     
     /** The username. */
-    @Column(name="USERNAME")
     private String username;
     
     /** The token. */
-    @Id
     private String token;
     
     /** The creation date. */
-    @Column(name="CREATION_DATE")
     private Date creationDate;
     
     /** The authorized. */
-    @Column(name="AUTHORIZED")
     private boolean authorized;
     
     /**

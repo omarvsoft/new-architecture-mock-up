@@ -1,42 +1,30 @@
-package com.evertec.cibp.api.authentication.model;
+package com.evertec.cibp.api.sdk.common.model.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-@Entity
-@Table(name = "CUSTOMER_PROFILE")
-public class Customer {
+public class CustomerProfile {
 	
-	@Id
-	@Column(name="PROFILE_ID")
 	private String profileId;
-	@Column(name="PERM_ID")
+
 	private Integer permId;
-	@Column(name="USERNAME")
+
 	private String userName;
-	@Transient
-	@Column(name="PASSWORD_HASH")
+
 	private String passwordHash;
-	@Transient
-	@Column(name="PASSWORD_SALT")
+
 	private String passwordSalt;
-	@Column(name="EMAIL")
+
 	private String email;
-	@Column(name="DATE_OF_BIRTH")
+
 	private String dateOfBirthday;
-	@Column(name="STATUS")
+
 	private String status;
-	@Column(name="USER_INTERFACE")
+
 	private String userInterface;
-	@Column(name="UGENDER")
+
 	private String gender;
 	
-	public Customer(){}
+	public CustomerProfile(){}
 	
-	public Customer(String profileId, Integer permId, String userName, String passwordHash, String passwordSalt,
+	public CustomerProfile(String profileId, Integer permId, String userName, String passwordHash, String passwordSalt,
 			String email, String dateOfBirthday, String status, String userInterface, String gender) {
 		super();
 		this.profileId = profileId;
@@ -105,7 +93,23 @@ public class Customer {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	
-	
 
+	public String getPasswordSalt() {
+		return passwordSalt;
+	}
+
+	public void setPasswordSalt(String passwordSalt) {
+		this.passwordSalt = passwordSalt;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomerProfile [profileId=" + profileId + ", permId=" + permId + ", userName=" + userName
+				+ ", passwordHash=" + passwordHash + ", passwordSalt=" + passwordSalt + ", email=" + email
+				+ ", dateOfBirthday=" + dateOfBirthday + ", status=" + status + ", userInterface=" + userInterface
+				+ ", gender=" + gender + "]";
+	}
+	
+	
+	
 }

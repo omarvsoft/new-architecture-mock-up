@@ -26,7 +26,7 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
  */
 @EnableResourceServer
 public class OAuth2Configuration {
-	
+		
 	/**
 	 * The Class OAuth2Config.
 	 */
@@ -97,19 +97,19 @@ public class OAuth2Configuration {
 					.secret("web123")
 					.authorizedGrantTypes("client_credentials")
 					.scopes("api_access", "read:customer_profile", "write:customer_profile")
-					.authorities("LOGIN","REGISTER")
+					.authorities("ROLE_LOGIN","REGISTER")
 					.and()
 					.withClient("mi-banco-android")
 					.secret("android123")
 					.authorizedGrantTypes("client_credentials")
 					.scopes("api_access", "read:customer_profile", "write:customer_profile")
-					.authorities("LOGIN","REGISTER")
+					.authorities("ROLE_LOGIN","REGISTER")
 					.and()
 					.withClient("mi-banco-ios")
 					.secret("iOS123")
 					.authorizedGrantTypes("client_credentials")
 					.scopes("api_access", "read:customer_profile", "write:customer_profile")
-					.authorities("LOGIN","REGISTER")
+					.authorities("ROLE_LOGIN","REGISTER")
 					.and()
 					.withClient("authentication-services")
 					.secret("auth123")
@@ -164,7 +164,10 @@ public class OAuth2Configuration {
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests().anyRequest().authenticated();
+
 		}
+		
+		
 
 	}
 

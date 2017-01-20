@@ -31,4 +31,4 @@ logging:
 ci-bp:
      services:
              customer-api:
-                      url:http://localhost:8085/customer/v1/
+                      url: http://localhost:8085/customer/v1/

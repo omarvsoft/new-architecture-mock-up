@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.evertec.cibp.api.authentication.model.SSOToken;
+import com.evertec.cibp.api.authentication.model.domain.SSOToken;
 import com.evertec.cibp.api.authentication.repository.SSOTokenRepository;
 
 /**

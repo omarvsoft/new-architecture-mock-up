@@ -9,7 +9,7 @@
 		<groupId>com.evertec.cibp.api</groupId>
 		<artifactId>new-architecture-mock-up</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<relativePath>..</relativePath> 
 	</parent>
 
 	<properties>

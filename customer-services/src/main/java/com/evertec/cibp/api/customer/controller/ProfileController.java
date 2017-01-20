@@ -40,7 +40,7 @@ public class ProfileController {
 	@RequestMapping(value="{userName}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
-	@PreAuthorize("#oauth2.isUser() and hasAuthority('LOGIN')")
+	@PreAuthorize("#oauth2.isUser() and hasAuthority('ROLE_LOGIN')")
 	public Customer getCustomer(@PathVariable("userName") String userName) {
 		return customerRepository.findOne(userName);
 	}
