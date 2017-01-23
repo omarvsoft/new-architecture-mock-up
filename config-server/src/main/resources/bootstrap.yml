@@ -1,10 +1,12 @@
 server:
   port: 8888
-#spring:
-#  cloud:
-#    config:
-#      server:
-#        git:
-#          uri: asdasdasdas
-#          username: 
-#          password: 
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/omarvsoft/new-architecture-mock-up.git
+          username: cesargomezvela
+          password: YOUR_PASSWORD_HERE
+          search-paths:
+            - config-repository
