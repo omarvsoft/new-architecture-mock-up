@@ -1,0 +1,23 @@
+server:
+  context-path: /authserver
+spring:
+   datasource:
+    url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+   h2:
+    console:
+      enabled: true
+      path: /console 
+   application:
+    name: authorization_server
+security:
+    user:
+        password: password
+logging:
+    level:
+        org.springframework.security: DEBUG
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE 

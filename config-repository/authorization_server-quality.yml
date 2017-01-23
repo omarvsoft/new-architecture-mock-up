@@ -1,0 +1,5 @@
+spring:
+   application:
+    name: authorization_server
+custom:
+  description: TEST FILE FOR QUALITY
