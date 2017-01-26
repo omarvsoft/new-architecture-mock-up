@@ -24,7 +24,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 	 * Type safe representation of application.properties
 	 */
 	@Autowired
-	ClusterConfigurationProperties clusterProperties;
+	private ClusterConfigurationProperties clusterProperties;
 
 	@Bean
 	public JedisConnectionFactory redisConnectionFactory() {
