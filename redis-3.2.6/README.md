@@ -2,7 +2,7 @@
 
 When this example was made, the latest version of redis was `redis-3.2.6`
 
-## Redis Cluster Golas
+## Redis Cluster Goals
 
 `Redis Cluster is a distributed implementation of Redis with the following goals, in order of importance in the design:`
 
