@@ -17,19 +17,33 @@
 	</modules>
 
 	<properties>
-		<springframework.boot.version>1.4.3.RELEASE</springframework.boot.version>
-		<springframework.cloud.version>Camden.SR4</springframework.cloud.version>
-		<maven.jacoco.plugin.version>0.7.2.201409121644</maven.jacoco.plugin.version>
-		<docker.image.prefix>springio</docker.image.prefix>
-		<docker.image.registry>localhost:5000</docker.image.registry>
-		<docker.image.user>mi-banco</docker.image.user>
-		<docker.spotify.plugin.version>0.4.11</docker.spotify.plugin.version>
-		<docker.spotify.plugin.dockerDirectory>src/main/docker</docker.spotify.plugin.dockerDirectory>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
+		<!-- Java configuration -->
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
     	<maven.compiler.target>1.8</maven.compiler.target>
+    	
+		<!-- Spring boot -->
+		<springframework.boot.version>1.4.3.RELEASE</springframework.boot.version>
+		
+		<!-- Spring cloud -->
+		<springframework.cloud.version>Camden.SR4</springframework.cloud.version>
+    	
+    	<!-- Docker image name -->
+    	<docker.image.registry>localhost:5000</docker.image.registry>
+		<docker.image.user>mi-banco</docker.image.user>
+		<docker.image.name>${docker.image.registry}/${docker.image.user}/${project.artifactId}</docker.image.name><!--Naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
+		
+		<!-- Spotify maven plugin -->
+		<docker.spotify.plugin.version>0.4.11</docker.spotify.plugin.version>
+		<docker.spotify.plugin.dockerDirectory>src/main/docker</docker.spotify.plugin.dockerDirectory>
+		
+		<!-- jacoco plugin -->
+		<maven.jacoco.plugin.version>0.7.2.201409121644</maven.jacoco.plugin.version>
+		
+		<!-- Project configuration -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
+		
 	</properties>
 
 
@@ -114,8 +128,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>${docker.spotify.plugin.version}</version>
                 <configuration>
-                    <!--Docker naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
-                    <imageName>${docker.image.registry}/${docker.image.user}/${project.artifactId}</imageName>
+                    <imageName>${docker.image.name}</imageName>
                     <dockerDirectory>${docker.spotify.plugin.dockerDirectory}</dockerDirectory>
                     <forceTags>true</forceTags>
                     <imageTags>
