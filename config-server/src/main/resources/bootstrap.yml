@@ -6,7 +6,7 @@ spring:
       server:
         git:
           uri: https://github.com/omarvsoft/new-architecture-mock-up.git
-          username: cesargomezvela
-          password: YOUR_PASSWORD_HERE
+          username: muck-up
+          password: co-qui2017
           search-paths:
             - config-repository
