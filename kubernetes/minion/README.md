@@ -33,6 +33,11 @@ docker exec -ti kubernetes_centos_minion /bin/bash /usr/bin/cgroupfs-mount.sh
 
 docker exec -ti kubernetes_centos_minion /bin/bash /usr/bin/setEnv.sh
 
+## Check Service Healthy
+
+docker exec -ti kubernetes_centos_minion systemctl status kubelet <br/>
+docker exec -ti kubernetes_centos_minion systemctl status flanneld <br/>
+
 ## Flannel
 
 Flannel is a very simple overlay network that satisfies the Kubernetes requirements. Many people have reported success with Flannel and Kubernetes.
