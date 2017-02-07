@@ -26,6 +26,8 @@ public class CustomerController {
 		System.out.println("Token in Cookie " + token);
 		
 		User userDeserialized = (User) getValue(token);
+		
+		request.getSession().setAttribute("userDeserialized", "userDeserialized");
         
 		request.getCookies();
 		
