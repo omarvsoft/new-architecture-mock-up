@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	​
+	<!-- Console Custom Pattern -->
+	<property name="CONSOLE_LOG_PATTERN"
+		value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+	<!-- AMQP Custom Pattern -->
+	<property name="AMQP_LOG_PATTERN"
+		value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+	<!-- Appender to log to console -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<!-- Minimum logging level to be presented in the console logs -->
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<appender name="AMQP"
+		class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+		<layout>
+			<pattern>${AMQP_LOG_PATTERN}</pattern>
+		</layout>
+		<!-- <addresses>localhost:5672,foo:5672</addresses> -->
+		<host>localhost</host>
+		<port>5672</port>
+		<username>guest</username>
+		<password>guest</password>
+		<applicationId>cibp-authentication</applicationId>
+		<exchangeName>cibp-log-02</exchangeName>
+		<exchangeType>topic</exchangeType>
+		<!-- <routingKeyPattern>%property{applicationId}.%c.%p</routingKeyPattern> -->
+		<routingKeyPattern>test</routingKeyPattern>
+		<generateId>true</generateId>
+		<charset>UTF-8</charset>
+		<deliveryMode>NON_PERSISTENT</deliveryMode>
+		<senderPoolSize>3</senderPoolSize>
+		<maxSenderRetries>3</maxSenderRetries>
+		<!-- <declareExchange>true</declareExchange> -->
+	</appender>
+	​
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<!-- uncomment this to log to an AMQP -->
+		 <appender-ref ref="AMQP"/>
+	</root>
+</configuration>
