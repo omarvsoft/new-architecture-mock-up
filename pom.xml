@@ -1,4 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	~ EVERTEC Inc. 2017
+	
+	~ ********************************************
+	~ **ABOUT THE DOCKER MAVEN PLUGIN BY SPOTIFY**
+	~ ********************************************
+	~ https://github.com/spotify/docker-maven-plugin
+	~ Current version: 0.4.13
+	~ 2017-February-10
+	
+	~ <dockerDirectory> is disabled because the image is building through XML configuration.
+	~ If you want to use a Dockerfile instead, you should uncomment <dockerDirectory>.
+	~ The value would should point to src/main/docker
+	~ In that case the following configuration will be ignored:
+	~ -baseImage
+	~ -volumes
+	~ -runs
+	~ -env
+	~ -entryPoint
+	~ *resources configuration will be included but you should set the clause ADD in the Dockerfile
+	
+	~ The XML configuration will generate a Dockerfile like: (you can found this in the path /${projectPath}/target/docker/Dockerfile after run mvn docker:build)
+	
+	~ FROM frolvlad/alpine-oraclejdk8:slim
+	~ ADD test-springbootms-0.1.0-SNAPSHOT.jar .
+	~ RUN mv test-springbootms-0.1.0-SNAPSHOT.jar app.jar
+	~ RUN sh -c 'touch /app.jar'
+	~ ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+	~ VOLUME /tmp
+	
+	~ At this moment the plugin doesn't support well the replace feature in the Dockerfile which can give us more flexibility in the Dockerfile in order
+	~ to do something like:
+	
+	~ FROM ${image.base}
+	~ ADD ${project.artifactId}/${project.version}.jar
+	
+	~ In the future, an update to this issue can be considered in order to change to Dockerfile configuration instead XML configuration
+	
+	~ **********************************
+	~ **ABOUT THE FABRIC8 MAVEN PLUGIN**
+	~ **********************************
+	~ https://maven.fabric8.io
+	~ Current version: 3.2.18
+	~ 2017-February-10
+	
+	~ The aim of this plugin is build the kubernetes/openshift necessary resources and deploy a microservice in kubernetes or openshift.
+	~ Prerequisites:
+	~ - connection to a docker daemon
+	~ - connection to a cluster kubernetes/openshift
+	
+	~ Although  this plugin has the feature of build the docker image (through mvn fabric8:build) this is not its purpose at this moment.
+	~ We are building the docker image through docker-maven-plugin provided by spotify.
+	~ The image configuration in the fabric8 plugin has the intention of build correctly kubernetes.yaml/openshift.yaml descriptors 
+	~ and not to build the docker image.
+	
+	~ We are using the Resource Fragments approach to configuring the plugin.
+	~ At this moment the XML configuration doesn't work (https://github.com/fabric8io/fabric8-maven-plugin/issues/813). 
+	~ An update can be done in the future to change the approach.
+	
+	~ The main characteristics of Resource Fragments approach are:
+	~ - You have to have a folder named fabric8 under src/main Where the k8s/o7t descriptors will be taken automatically
+	~ - The descriptors aren't entire descriptors, actually are fragments.
+	~ - These fragments need to have the naming convention: 
+	~ 	* name-project-service.yml 
+	~ 	* name-project-deployment.yml
+	~ 	Where the "name-project" will be the name of the resource and service and deployment will be the kind of resources
+	~ 	In this example we will have two resources: a service called name-project and a deployment called name-project
+	
+	~ About the deployment fragment
+	~ At this time we have the next configuration:
+	~ 	spec:
+		  replicas: 1
+		  template:
+		    spec:
+		      containers:
+		      - env:
+		        livenessProbe:
+		          httpGet:
+		              path: /health
+		              port: 8080
+		              scheme: HTTP
+		          initialDelaySeconds: 180
+		        readinessProbe:
+		          httpGet:
+		              path: /health
+		              port: 8080
+		              scheme: HTTP
+		          initialDelaySeconds: 30
+  	~ With this configuration we will have a single pod.
+  	~ Also, we configured a readinessProbe to know when a pod is ready to start accepting traffic  
+  	~ And a livenessProbe is configured too. 
+  	~ The ports must match with the spring boot configuration (application.properties property server.port)
+  	~ The rest of the descriptor will be automatically added.
+  	
+  	~ About the service fragment
+  	~ At this time we have the next configuration:
+  	~ spec:
+  	~ 	type: LoadBalancer
+  	~ 	ports:
+  	~ 		- port: 80
+    ~ 		targetPort: 8080
+    ~ This configuration is important. 
+    ~ The port indicates the port of the service. 
+    ~ In that way you will access the service through that port
+    ~ The targetPort is the port where the tomcat is running. 
+    ~ In that way it must match with the spring boot configuration (application.properties property server.port)
+    ~ The type is the type of the service 
+    ~ Not always LoadBalancer is necessary. Visit https://kubernetes.io/docs/user-guide/services
+    
+    ~ The property imagePullPolicy is configured as IfNotPresent to avoid download the image from the registry each time a pod is created.
+    ~ In the same way, the image deployed in kubernetes contains the version as a tag in order to avoid the same situation.
+    ~ If you want to change this behavior, You can override the property: <fabric8.maven.conf.imagePullPolicy/> in the child pom
+    ~ Visit: https://kubernetes.io/docs/user-guide/config-best-practices/
+    
+    ~ The main commands of this plugin are:
+    ~ - mvn fabric8:build which build the docker images (it is not its purpose at this moment. You can build the image through mvn docker:build)
+    ~ - mvn fabric8:resource which will generate the k8s/o7t descriptors in the path ${project}/target/classes/META-INF/fabric8
+    ~ - mvn fabric8:deploy this will deploy the resources in ks8/o7t
+    ~ After executed the deploy command you will have in kubernetes: pods running, a replicationSet and a service exposed.
+    
+    ~ In order to execute an entire cycle you should execute:
+    ~ mvn clean package docker:build fabric8:resource fabric8:deploy
+    
+    ~ Or you can use the plugin exec-maven-plugin which has incorporated all these tasks
+    ~ mvn -Pk8s exec:exec
+    
+    ~ Another interesting commands are (visit https://maven.fabric8.io to see the entire list of commands):
+    ~ fabric8:undeploy
+    ~ fabric8:debug
+    
+    ~ In order to follow the best practices in kubernetes this project has configured some labels which will be added automatically.
+    ~ Is recommended that each child project override this labels according their specifications.  
+	~ <label.all.tier/>
+	~ <label.all.phase/>
+	~ <label.all.product/>
+	~ Additionally more labels can be configured in the fragments files yml. Consider that labels and selector must be the same
+    
+    ~ More information:
+    ~ https://maven.fabric8.io/#resource-fragments
+    ~ https://kubernetes.io/docs/user-guide/services/
+    ~ https://kubernetes.io/docs/user-guide/deployments/
+    ~ https://kubernetes.io/docs/user-guide/replicasets/
+    ~ https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+    
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -34,15 +179,29 @@
 		<docker.image.name>${docker.image.registry}/${docker.image.user}/${project.artifactId}</docker.image.name><!--Naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
 		
 		<!-- Spotify maven plugin -->
-		<docker.spotify.plugin.version>0.4.11</docker.spotify.plugin.version>
+		<docker.spotify.plugin.version>0.4.13</docker.spotify.plugin.version>
 		<docker.spotify.plugin.dockerDirectory>src/main/docker</docker.spotify.plugin.dockerDirectory>
+		
+		<!-- Fabric8 maven plugin -->
+		<fabric8.maven.plugin.version>3.2.18</fabric8.maven.plugin.version>
+		<fabric8.maven.conf.imagePullPolicy>IfNotPresent</fabric8.maven.conf.imagePullPolicy>
 		
 		<!-- jacoco plugin -->
 		<maven.jacoco.plugin.version>0.7.2.201409121644</maven.jacoco.plugin.version>
 		
+		<!-- exec-maven-plugin -->
+		<exec.maven.plugin.version>1.5.0</exec.maven.plugin.version>
+		
 		<!-- Project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
+		
+		<!-- Labels to add to kubernetes configuration -->
+		<label.all.owner>EVERTEC</label.all.owner>
+		<label.all.app>${project.artifactId}</label.all.app>
+		<label.all.tier>backend</label.all.tier>
+		<label.all.phase>development</label.all.phase>
+		<label.all.product>Mi-Banco</label.all.product>
 		
 	</properties>
 
@@ -88,6 +247,52 @@
 	<build>
 		<finalName>${project.build.finalName}</finalName>
 		<plugins>
+			<!-- fabric8-maven::plugin[] -->
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8.maven.plugin.version}</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.image.name}:${project.version}</name>
+							<build>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>latest</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+					<resources>
+						<imagePullPolicy>${fabric8.maven.conf.imagePullPolicy}</imagePullPolicy>
+						<labels>
+							<all>
+								<property>
+									<name>owner</name>
+									<value>${label.all.owner}</value>
+								</property>
+								<property>
+									<name>app</name>
+									<value>${label.all.app}</value>
+								</property>
+								<property>
+									<name>tier</name>
+									<value>${label.all.tier}</value>
+								</property>
+								<property>
+									<name>phase</name>
+									<value>${label.all.phase}</value>
+								</property>
+								<property>
+									<name>product</name>
+									<value>${label.all.product}</value>
+								</property>
+							</all>
+						</labels>
+					</resources>
+				</configuration>
+			</plugin>
 			<!-- spring-boot-maven::plugin[] -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -100,7 +305,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+	
 			<!-- tag::plugin[] -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,35 +326,72 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+	
 			<!-- Spotify::plugin[] -->
 			<plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${docker.spotify.plugin.version}</version>
-                <configuration>
-                    <imageName>${docker.image.name}</imageName>
-                    <dockerDirectory>${docker.spotify.plugin.dockerDirectory}</dockerDirectory>
-                    <forceTags>true</forceTags>
-                    <imageTags>
-                    	<imageTag>${project.version}</imageTag>
-                    	<imageTag>latest</imageTag>
-                    </imageTags>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                    <!-- Registry using ~/.docker/config.json file for authentication  Hint: The build will fail, if the config file doesn't exist.-->
-					<!-- <useConfigFile>true</useConfigFile> -->
-                </configuration>
-            </plugin>
-
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${docker.spotify.plugin.version}</version>
+				<configuration>
+					<!-- <dockerDirectory>${docker.spotify.plugin.dockerDirectory}</dockerDirectory> -->
+					<imageName>${docker.image.name}</imageName>
+					<baseImage>frolvlad/alpine-oraclejdk8:slim</baseImage>
+					<volumes>
+						<volume>/tmp</volume>
+					</volumes>
+					<runs>
+						<run>mv ${project.build.finalName}.jar app.jar</run>
+						<run>sh -c 'touch /app.jar'</run>
+					</runs>
+					<env>
+					</env>
+					<entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</entryPoint>
+					<forceTags>true</forceTags>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+						<imageTag>latest</imageTag>
+					</imageTags>
+					<resources>
+						<resource>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+<!-- 					Registry using ~/.docker/config.json file for authentication Hint: -->
+<!-- 						The build will fail, if the config file doesn't exist. -->
+					<useConfigFile>true</useConfigFile>
+				</configuration>
+			</plugin>
+	
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>k8s</id>
+			<build>
+				<plugins>
+					<!-- 
+						exec-maven-plugin::It helps to execute several maven commands
+						execution command: mvn -Pk8s exec:exec
+					-->
+					<plugin>
+			            <groupId>org.codehaus.mojo</groupId>
+			            <artifactId>exec-maven-plugin</artifactId>
+			            <version>${exec.maven.plugin.version}</version>
+			            <configuration>
+			                <executable>mvn</executable>
+			                <arguments>
+			                    <argument>clean</argument>
+			                    <argument>package</argument>
+			                    <argument>docker:build</argument>
+			                    <argument>fabric8:resource</argument>
+			                    <argument>fabric8:deploy</argument>
+			                </arguments>
+			            </configuration>
+			        </plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>test-coverage</id>
 			<build>

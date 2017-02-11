@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	~ EVERTEC Inc. 2017
+	
+	~ In order to change the version of spring-boot or spring-cloud, you should OVERRIDE the following properties from the parent pom 
+	~ <springframework.boot.version/> 
+	~ <springframework.cloud.version/>
+	~ Additional resources can be modified through override parents properties.
+	
+	~ It is recommended override the next kubernetes labels to configure this project with its own specifications.
+	~ <label.all.tier/>
+	~ <label.all.phase/>
+	~ <label.all.product/>
+	~ Additionally more labels can be configured in the fragments files yml under src/main/fabric8 folder
+	~ If you add more labels to yml files, You should consider that labels and selector must be the same 
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -13,13 +28,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<!--In order to change the version of spring-boot or spring-cloud, you should 
-		OVERRIDE the following properties from the parent pom 
-		<springframework.boot.version/> 
-		<springframework.cloud.version/> 
-	-->
 	<properties>
-		<project.build.finalName>configserver</project.build.finalName>
+		<label.all.tier>backend</label.all.tier>
+		<label.all.phase>development</label.all.phase>
+		<label.all.product>Mi-Banco</label.all.product>
 	</properties>
 
 	<dependencies>

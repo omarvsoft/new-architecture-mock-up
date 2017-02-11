@@ -3,7 +3,7 @@ server:
   context-path: /authentication
 spring:
   application:
-    name: authentication-server
+    name: authentication_server
   datasource:
     url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driverClassName: org.h2.Driver

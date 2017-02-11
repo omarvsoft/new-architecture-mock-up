@@ -1,0 +1,18 @@
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - env:
+        livenessProbe:
+          httpGet:
+              path: /customer/health
+              port: 8085
+              scheme: HTTP
+          initialDelaySeconds: 180
+        readinessProbe:
+          httpGet:
+              path: /customer/health
+              port: 8085
+              scheme: HTTP
+          initialDelaySeconds: 30
