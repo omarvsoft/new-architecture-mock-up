@@ -40,20 +40,21 @@ This repository contains example projects for the different proposed components 
 ## Docker
 <img src="https://www.docker.com/sites/default/files/moby.svg" width="300"/>
 
-> "Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries – anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment."
+> "Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries â€“ anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment."<br/>
 https://www.docker.com/what-docker
 
-The most of the projects that integrate this repository will be containerized in docker images. The images will be generated through spotify docker maven plugin https://github.com/spotify/docker-maven-plugin (current version: 0.4.13)
+The most of the projects that integrate this repository will be containerized in docker images. 
+<br/>The images will be generated through Spotify docker maven plugin https://github.com/spotify/docker-maven-plugin (current version: 0.4.13)
 
-The approach choosen was **"Specify build info in the POM"** instead of a external Dockerfile because currently the plugin doesn't work appropriately with replace feature which can give us more flexibility in the Dockerfile to manipulate its content dinamically.
+The approach chosen was **"Specify build info in the POM"** instead of an external Dockerfile because currently, the plugin doesn't work appropriately with replacing feature which can give us more flexibility in the Dockerfile to manipulate its content dynamically.
 For example:
 ```docker
 FROM ${image.base}
 ADD ${project.artifactId}/${project.version}.jar
 ```
-In the future an update can be considered in order to externalice the configuration.
+In the future, an update can be considered in order to externalize the configuration.
 
-The current XML configuration describes how the image have to be build.
+The current XML configuration describes how the image has to be built.
 ```xml
 <!-- <dockerDirectory>${spotify.docker.directory}</dockerDirectory> -->
 <imageName>${docker.image.name}</imageName>
@@ -83,13 +84,26 @@ The current XML configuration describes how the image have to be build.
 <!-- The build will fail, if the config file doesn't exist. -->
 <useConfigFile>true</useConfigFile>
 ```
->*You can modify the default configuration overriding in the subprojects the properties inherited from parent pom* 
+
+`dockerDirectory` is disabled because the image is building through XML configuration.
+<br/>If you want to use a Dockerfile instead, you should uncomment `dockerDirectory`.<br/>
+
+The value would should point to src/main/docker
+In that case the following configuration will be ignored:
+- baseImage
+- volumes
+- runs
+- env
+- entryPoint
+- Resources configuration will be included but you should set the clause ADD in the Dockerfile
+    
+>Other configurations like imageName can be modified through overriding in the sub projects the properties inherited from parent pom
 
 You can build a docker image of any subproject through (docker must be configured correctly):
 ```ssh
 mvn docker:build
 ```
-The above instruction will generete a Dockerfile at the location target/docker/Dockerfile
+The above instruction will generate a Dockerfile at the path target/docker/Dockerfile
 ```
 FROM frolvlad/alpine-oraclejdk8:slim
 RUN mv configserver-mock-up-0.1.0-SNAPSHOT.jar app.jar
@@ -108,24 +122,24 @@ What it is
 The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.
 https://docs.docker.com/registry/
 
-It is importan to notice that the name of the image has relevance. 
-The naming convention is: **REGISTRY[:PORT]/USER/REPO[:TAG]**
-The complete name of the image with its two tags are:
+It is important to notice that the name of the image has relevance. 
+The naming convention is **REGISTRY[:PORT]/USER/REPO[:TAG]**
+The complete name of the image with its two tags are
 ```
 localhost:5000/mi-banco/configserver-mock-up:0.1.0-SNAPSHOT
 localhost:5000/mi-banco/configserver-mock-up:latest
 ```
 The registry indicates where the image will be storage or download. <br/><br/>
-In that way if we execute the command **docker push**, docker will try to push the image into a docker registry located at `localhost:5000` 
+In that way, if we execute the command **docker push**, docker will try to push the image into a docker registry located at `localhost:5000` 
 
-Subsequently docker will ask for the user `mi-banco` and finally will push the image `configserver-mock-up` in the registry.
+Subsequently, docker will ask for the user `mi-banco` and finally will push the image `configserver-mock-up` in the registry.
 
-If we want to pull the image, docker will try to download the image according with the registry configured in the image's name.
+If we want to pull the image, docker will try to download the image according to with the registry configured in the image's name.
 
 >NOTA
 If there isn't a registry in the image's name the registry by default is docker.io
 
 #### Kubernetes Considerations
 >The default container image pull policy is `IfNotPresent`, which causes the Kubelet to not pull an image if it already exists. If you would like to always force a pull, you must specify a pull image policy of `Always` in your .yaml file (`imagePullPolicy: Always`) or specify a `:latest` tag on your image.<br/><br/>
-That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version. <br/><br/>
+That is, if youâ€™re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet wonâ€™t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version. <br/><br/>
 **Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. https://kubernetes.io/docs/user-guide/config-best-practices/
