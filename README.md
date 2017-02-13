@@ -82,10 +82,10 @@ The current XML configuration describes how the image has to be built.
 </resources>
 <!-- Registry using ~/.docker/config.json file for authentication Hint: -->
 <!-- The build will fail, if the config file doesn't exist. -->
-<useConfigFile>true</useConfigFile>
+<!-- <useConfigFile>true</useConfigFile> -->
 ```
 
-`dockerDirectory` is disabled because the image is building through XML configuration.
+`dockerDirectory` is disabled because the image is built through XML configuration.
 <br/>If you want to use a Dockerfile instead, you should uncomment `dockerDirectory`.<br/>
 
 The value would should point to src/main/docker
@@ -95,13 +95,15 @@ In that case the following configuration will be ignored:
 - runs
 - env
 - entryPoint
-- Resources configuration will be included but you should set the clause ADD in the Dockerfile
+- Resources configuration will be included, but you should set the clause ADD in the Dockerfile
+
+In order to push an image into a registry You should uncomment `<useConfigFile>` but in that case, you have to be logged in the registry and your credentials have to be stored in `~/.docker/config.json`
     
 >Other configurations like imageName can be modified through overriding in the sub projects the properties inherited from parent pom
 
 You can build a docker image of any subproject through (docker must be configured correctly):
 ```ssh
-mvn docker:build
+mvn clean package docker:build
 ```
 The above instruction will generate a Dockerfile at the path target/docker/Dockerfile
 ```
@@ -124,7 +126,7 @@ https://docs.docker.com/registry/
 
 It is important to notice that the name of the image has relevance. 
 The naming convention is **REGISTRY[:PORT]/USER/REPO[:TAG]**
-The complete name of the image with its two tags are
+The complete names of the image with its two tags are
 ```
 localhost:5000/mi-banco/configserver-mock-up:0.1.0-SNAPSHOT
 localhost:5000/mi-banco/configserver-mock-up:latest
