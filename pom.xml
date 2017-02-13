@@ -179,8 +179,10 @@
 		<docker.image.name>${docker.image.registry}/${docker.image.user}/${project.artifactId}</docker.image.name><!--Naming convention REGISTRY[:PORT]/USER/REPO[:TAG]-->
 		
 		<!-- Spotify maven plugin -->
-		<docker.spotify.plugin.version>0.4.13</docker.spotify.plugin.version>
-		<docker.spotify.plugin.dockerDirectory>src/main/docker</docker.spotify.plugin.dockerDirectory>
+		<spotify.plugin.version>0.4.13</spotify.plugin.version>
+		<spotify.docker.directory>src/main/docker</spotify.docker.directory>
+		<spotify.docker.baseImage>frolvlad/alpine-oraclejdk8:slim</spotify.docker.baseImage>
+		<spotify.docker.entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</spotify.docker.entryPoint>
 		
 		<!-- Fabric8 maven plugin -->
 		<fabric8.maven.plugin.version>3.2.18</fabric8.maven.plugin.version>
@@ -331,11 +333,11 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>${docker.spotify.plugin.version}</version>
+				<version>${spotify.plugin.version}</version>
 				<configuration>
-					<!-- <dockerDirectory>${docker.spotify.plugin.dockerDirectory}</dockerDirectory> -->
+					<!-- <dockerDirectory>${spotify.docker.directory}</dockerDirectory> -->
 					<imageName>${docker.image.name}</imageName>
-					<baseImage>frolvlad/alpine-oraclejdk8:slim</baseImage>
+					<baseImage>${spotify.docker.baseImage}</baseImage>
 					<volumes>
 						<volume>/tmp</volume>
 					</volumes>
@@ -345,7 +347,7 @@
 					</runs>
 					<env>
 					</env>
-					<entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</entryPoint>
+					<entryPoint>${spotify.docker.entryPoint}</entryPoint>
 					<forceTags>true</forceTags>
 					<imageTags>
 						<imageTag>${project.version}</imageTag>
@@ -359,7 +361,7 @@
 					</resources>
 <!-- 					Registry using ~/.docker/config.json file for authentication Hint: -->
 <!-- 						The build will fail, if the config file doesn't exist. -->
-					<useConfigFile>true</useConfigFile>
+<!-- 					<useConfigFile>true</useConfigFile> -->
 				</configuration>
 			</plugin>
 	

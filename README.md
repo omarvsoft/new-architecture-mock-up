@@ -206,7 +206,9 @@ https://kubernetes.io/docs/user-guide/labels/
 ```
 
 ### Creating resources
-With the aim of generating the resources that kubernetes requires in a fast way and with dynamic values according to with each project. We use the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
+With the aim of generating the resources that kubernetes requires in a fast way and with dynamic values according to with each project. 
+
+We use the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
 <img src="https://fabric8.io/images/fabric8_logo.svg" width="300"/>
 
 Prerequisites:
@@ -215,7 +217,7 @@ Prerequisites:
 
 Although  this plugin has the feature of build the docker image (through `mvn fabric8:build`) this is not its purpose at this moment.
 
-We are building the docker image through `docker-maven-plugin` provided by spotify.
+We are building the docker image through `docker-maven-plugin` provided by Spotify.
 
 The image configuration in the fabric8 plugin has the intention of build correctly kubernetes.yaml/openshift.yaml descriptors and not to build the docker image.
 
@@ -268,7 +270,7 @@ The rest of the descriptor will be automatically added.
 
 #### About the service fragment
 At this time we have the next configuration:<br>
-```
+```YAML 
 spec:
 	type: LoadBalancer
 	ports:
