@@ -37,10 +37,7 @@ This repository contains example projects for the different proposed components 
 * This folder contains the modified shells that are necessary to create and configure a basic redis cluster.
 
 
-<table border="0">
-	<td><h2>Docker</h2></td>
-	<td><img src="https://www.docker.com/sites/default/files/moby.svg" width="200"/></td>
-</table>
+## Docker<img src="https://www.docker.com/sites/default/files/moby.svg" width="300"/>
 
 > "Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries – anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment."
 https://www.docker.com/what-docker
