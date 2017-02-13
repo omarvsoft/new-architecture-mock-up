@@ -122,8 +122,7 @@ If we want to pull the image, docker will try to download the image according wi
 >NOTA
 If there isn't a registry in the image's name the registry by default is docker.io
 
-##### Kubernetes 
-Considerations
+##### Kubernetes Considerations
 >The default container image pull policy is `IfNotPresent`, which causes the Kubelet to not pull an image if it already exists. If you would like to always force a pull, you must specify a pull image policy of `Always` in your .yaml file (`imagePullPolicy: Always`) or specify a `:latest` tag on your image.
-That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version.
+That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version. <br/>
 **Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. https://kubernetes.io/docs/user-guide/config-best-practices/
