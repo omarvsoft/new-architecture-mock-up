@@ -190,10 +190,13 @@ https://kubernetes.io/docs/user-guide/replicasets/#what-is-a-replicaset
 ### What is a Service? <br>
 Kubernetes Pods are mortal. They are born and when they die, they are not resurrected. ReplicationControllers in particular create and destroy Pods dynamically (e.g. when scaling up or down or when doing rolling updates). While each Pod gets its own IP address, even those IP addresses cannot be relied upon to be stable over time. This leads to a problem: if some set of Pods (let’s call them backends) provides functionality to other Pods (let’s call them frontends) inside the Kubernetes cluster, how do those frontends find out and keep track of which backends are in that set?<br><br>
 **Enter Services.**<br><br>
-A Kubernetes Service is an abstraction which defines a logical set of Pods and a policy by which to access them - sometimes called a micro-service. The set of Pods targeted by a Service is (usually) determined by a Label Selector
+A Kubernetes Service is an abstraction which defines a logical set of Pods and a policy by which to access them - sometimes called a micro-service. The set of Pods targeted by a Service is (usually) determined by a Label Selector <br>
+https://kubernetes.io/docs/user-guide/services/
 
 ### What is a Label? <br>
-Labels are key/value pairs that are attached to objects, such as pods. Labels are intended to be used to specify identifying attributes of objects that are meaningful and relevant to users, but which do not directly imply semantics to the core system. Labels can be used to organize and to select subsets of objects. Labels can be attached to objects at creation time and subsequently added and modified at any time. Each object can have a set of key/value labels defined. Each Key must be unique for a given object.
+Labels are key/value pairs that are attached to objects, such as pods. Labels are intended to be used to specify identifying attributes of objects that are meaningful and relevant to users, but which do not directly imply semantics to the core system. Labels can be used to organize and to select subsets of objects. Labels can be attached to objects at creation time and subsequently added and modified at any time. Each object can have a set of key/value labels defined. Each Key must be unique for a given object.<br>
+https://kubernetes.io/docs/user-guide/labels/
+
 ```javascript
 "labels": {
   "key1" : "value1",
@@ -202,3 +205,24 @@ Labels are key/value pairs that are attached to objects, such as pods. Labels ar
 ```
 
 ### Creating resources
+With the aim of generate the resources that kubernetes requires in a fast way and with dynamic values acording with each project. We lever in the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
+<img src="https://fabric8.io/images/fabric8_logo.svg" width="300"/>
+
+Prerequisites:
+- Connection to a docker daemon
+- Connection to a cluster kubernetes/openshift
+
+Although  this plugin has the feature of build the docker image (through `mvn fabric8:build`) this is not its purpose at this moment.
+
+We are building the docker image through `docker-maven-plugin` provided by spotify.
+
+The image configuration in the fabric8 plugin has the intention of build correctly kubernetes.yaml/openshift.yaml descriptors and not to build the docker image.
+
+We are using the Resource Fragments approach to configuring the plugin.
+
+At this moment the XML configuration doesn't work (https://github.com/fabric8io/fabric8-maven-plugin/issues/813). 
+
+An update can be done in the future to change the approach.
+
+
+
