@@ -154,15 +154,16 @@ That is, if you’re specifying an image with other than the `:latest` tag, e.g.
 <br>It groups containers that make up an application into logical units for easy management and discovery. Kubernetes builds upon 15 years of experience of running production workloads at Google, combined with best-of-breed ideas and practices from the community.<br>
 https://kubernetes.io
 
-In order to manage micro services at scale the subprojects containerized as docker images will be orchestate by kubernetes.
+In order to manage micro services at scale, the subprojects containerized as docker images will be orchestrated by kubernetes.
 
-There are several ways to deploy a microservice in kubernetes the first is by a series of commands line.<br>
-The second is through YAML descriptors that configure each necessary resource.<br>
-To deploy a microservice there are four basic resources to configure.
+There are several ways to deploy a microservice in kubernetes the first is a series of command line.<br>
+The second is through the YAML descriptors that configure each necessary resource.<br>
+To deploy a microservice there are five basic resources to configure.
 - Pods
 - Deployment
 - ReplicaSet
 - Services
+- Labels
 
 ### What is a Pod?<br>
 
@@ -205,7 +206,7 @@ https://kubernetes.io/docs/user-guide/labels/
 ```
 
 ### Creating resources
-With the aim of generate the resources that kubernetes requires in a fast way and with dynamic values acording with each project. We lever in the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
+With the aim of generating the resources that kubernetes requires in a fast way and with dynamic values according to with each project. We use the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
 <img src="https://fabric8.io/images/fabric8_logo.svg" width="300"/>
 
 Prerequisites:
@@ -224,5 +225,113 @@ At this moment the XML configuration doesn't work (https://github.com/fabric8io/
 
 An update can be done in the future to change the approach.
 
+The main characteristics of Resource Fragments approach are:
+- You have to have a folder named fabric8 under src/main Where the k8s/o7t descriptors will be taken automatically
+- The descriptors aren't entire descriptors, actually are fragments.
+- These fragments need to have the naming convention: 
+	* name-project-service.yml 
+	* name-project-deployment.yml
+
+Where the "name-project" will be the name of the resource and service and deployment will be the kind of resources
+
+In this example we will have two resources: a service called name-project and a deployment called name-project
+
+#### About the deployment fragment
+At this time we have the next configuration:
+
+```YAML 
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - env:
+        livenessProbe:
+          httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          initialDelaySeconds: 180
+        readinessProbe:
+          httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+          initialDelaySeconds: 30
+  ```
+  
+With this configuration we will have a single pod, also, we configured a readinessProbe to know when a pod is ready to start accepting traffic and a livenessProbe is configured too. 
+
+The ports must match with the spring boot configuration (application.properties property server.port)
+
+The rest of the descriptor will be automatically added.
+
+#### About the service fragment
+At this time we have the next configuration:<br>
+```
+spec:
+	type: LoadBalancer
+	ports:
+		- port: 80
+		targetPort: 8080
+```
+This configuration is important. 
+
+The port indicates the port of the service. 
+
+In that way you will access the service through that port
+The targetPort is the port where the tomcat is running. 
+
+In that way it must match with the spring boot configuration (application.properties property server.port)
+
+The type is the type of the service 
+Not always LoadBalancer is necessary. 
+
+Visit https://kubernetes.io/docs/user-guide/services
 
 
+The property imagePullPolicy is configured as `IfNotPresent` to avoid download the image from the registry each time a pod is created.
+
+In the same way, the image deployed in kubernetes contains the version as a tag in order to avoid the same situation.
+
+If you want to change this behavior, You can override the property: `<fabric8.maven.conf.imagePullPolicy/>` in the child pom
+
+Visit: https://kubernetes.io/docs/user-guide/config-best-practices/
+
+
+
+
+The main commands of this plugin are:
+- mvn fabric8:build which build the docker images (it is not its purpose at this moment. You can build the image through mvn docker:build)
+- mvn fabric8:resource which will generate the k8s/o7t descriptors in the path ${project}/target/classes/META-INF/fabric8
+- mvn fabric8:deploy this will deploy the resources in ks8/o7t
+
+After executed the deploy command you will have in kubernetes: pods running, a replicationSet and a service exposed.
+  
+In order to execute an entire cycle you should execute:
+```
+mvn clean package docker:build fabric8:resource fabric8:deploy
+```
+  
+Or you can use the plugin `exec-maven-plugin` which has incorporated all these tasks
+```
+mvn -Pk8s exec:exec
+```
+  
+Another interesting commands are (visit https://maven.fabric8.io to see the entire list of commands):
+```
+fabric8:undeploy
+fabric8:debug
+```
+  
+In order to follow the best practices in kubernetes this project has configured some labels which will be added automatically.
+
+Is recommended that each child project override this labels according their specifications.  
+
+`<label.all.tier/>`
+
+`<label.all.phase/>`
+
+`<label.all.product/>`
+
+>Additionally more labels can be configured in the fragments files yml. Consider that labels and selector must be the same
