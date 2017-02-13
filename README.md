@@ -119,13 +119,13 @@ REPOSITORY                                                TAG                 IM
 localhost:5000/mi-banco/configserver-mock-up              0.1.0-SNAPSHOT      a9b926686d10        2 days ago          234.9 MB
 localhost:5000/mi-banco/configserver-mock-up              latest              a9b926686d10        2 days ago          234.9 MB
 ```
->Docker Registry
-What it is
-The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.
+>Docker Registry<br/>
+What it is<br/>
+The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.<br/>
 https://docs.docker.com/registry/
 
-It is important to notice that the name of the image has relevance. 
-The naming convention is **REGISTRY[:PORT]/USER/REPO[:TAG]**
+It is important to notice that the name of the image has relevance. <br/>
+The naming convention is **REGISTRY[:PORT]/USER/REPO[:TAG]** <br/>
 The complete names of the image with its two tags are
 ```
 localhost:5000/mi-banco/configserver-mock-up:0.1.0-SNAPSHOT
@@ -138,10 +138,10 @@ Subsequently, docker will ask for the user `mi-banco` and finally will push the 
 
 If we want to pull the image, docker will try to download the image according to with the registry configured in the image's name.
 
->NOTA
-If there isn't a registry in the image's name the registry by default is docker.io
+>NOTE <br/>
+If there isn't a registry in the image's name the registry by default is `docker.io`
 
 #### Kubernetes Considerations
 >The default container image pull policy is `IfNotPresent`, which causes the Kubelet to not pull an image if it already exists. If you would like to always force a pull, you must specify a pull image policy of `Always` in your .yaml file (`imagePullPolicy: Always`) or specify a `:latest` tag on your image.<br/><br/>
 That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version. <br/><br/>
-**Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. https://kubernetes.io/docs/user-guide/config-best-practices/
+**Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. <br/><br>https://kubernetes.io/docs/user-guide/config-best-practices/
