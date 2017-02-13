@@ -43,19 +43,19 @@ https://www.docker.com
 
 The most of the projects that integrate this repository will be containerized in docker images. The images will be generated through spotify docker maven plugin https://github.com/spotify/docker-maven-plugin (current version: 0.4.13)
 
-The approach choosen was "Specify build info in the POM" instead of a external Dockerfile because currently the plugin doesn't work appropriately with replace feature which can give us more flexibility in the Dockerfile to manipulate its content dinamically.
+The approach choosen was **"Specify build info in the POM"** instead of a external Dockerfile because currently the plugin doesn't work appropriately with replace feature which can give us more flexibility in the Dockerfile to manipulate its content dinamically.
 For example:
-```sh
+```docker
 FROM ${image.base}
 ADD ${project.artifactId}/${project.version}.jar
 ```
 In the future an update can be considered in order to externalice the configuration.
 
-The current POM configuration:
-```sh
-<!-- <dockerDirectory>${docker.spotify.plugin.dockerDirectory}</dockerDirectory> -->
+The current XML configuration describes how the image have to be build.
+```xml
+<!-- <dockerDirectory>${spotify.docker.directory}</dockerDirectory> -->
 <imageName>${docker.image.name}</imageName>
-<baseImage>frolvlad/alpine-oraclejdk8:slim</baseImage>
+<baseImage>${spotify.docker.baseImage}</baseImage>
 <volumes>
 	<volume>/tmp</volume>
 </volumes>
@@ -65,7 +65,7 @@ The current POM configuration:
 </runs>
 <env>
 </env>
-<entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</entryPoint>
+<entryPoint>${spotify.docker.entryPoint}</entryPoint>
 <forceTags>true</forceTags>
 <imageTags>
 	<imageTag>${project.version}</imageTag>
@@ -80,4 +80,23 @@ The current POM configuration:
 <!-- Registry using ~/.docker/config.json file for authentication Hint: -->
 <!-- The build will fail, if the config file doesn't exist. -->
 <useConfigFile>true</useConfigFile>
+```
+
+You can build a docker image of any subproject through (docker must be configured correctly):
+```ssh
+mvn docker:build
+```
+The above instruction will generete a Dockerfile at the location target/docker/Dockerfile
+```
+FROM frolvlad/alpine-oraclejdk8:slim
+RUN mv configserver-mock-up-0.1.0-SNAPSHOT.jar app.jar
+RUN sh -c 'touch /app.jar'
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+VOLUME /tmp
+```
+And a docker images with two tags will be created
+```
+REPOSITORY                                                TAG                 IMAGE ID            CREATED             SIZE
+localhost:5000/mi-banco/configserver-mock-up              0.1.0-SNAPSHOT      a9b926686d10        2 days ago          234.9 MB
+localhost:5000/mi-banco/configserver-mock-up              latest              a9b926686d10        2 days ago          234.9 MB
 ```
