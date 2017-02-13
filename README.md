@@ -145,3 +145,60 @@ If there isn't a registry in the image's name the registry by default is `docker
 >The default container image pull policy is `IfNotPresent`, which causes the Kubelet to not pull an image if it already exists. If you would like to always force a pull, you must specify a pull image policy of `Always` in your .yaml file (`imagePullPolicy: Always`) or specify a `:latest` tag on your image.<br/><br/>
 That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version. <br/><br/>
 **Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. <br/><br>https://kubernetes.io/docs/user-guide/config-best-practices/
+
+
+
+## kubernetes <img src="https://kubernetes.io/images/nav_logo.svg" width="300"/>
+
+> Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
+<br>It groups containers that make up an application into logical units for easy management and discovery. Kubernetes builds upon 15 years of experience of running production workloads at Google, combined with best-of-breed ideas and practices from the community.<br>
+https://kubernetes.io
+
+In order to manage micro services at scale the subprojects containerized as docker images will be orchestate by kubernetes.
+
+There are several ways to deploy a microservice in kubernetes the first is by a series of commands line.<br>
+The second is through YAML descriptors that configure each necessary resource.<br>
+To deploy a microservice there are four basic resources to configure.
+- Pods
+- Deployment
+- ReplicaSet
+- Services
+
+### What is a Pod?<br>
+
+A pod (as in a pod of whales or pea pod) is a group of one or more containers (such as Docker containers), the shared storage for those containers, and options about how to run the containers. Pods are always co-located and co-scheduled, and run in a shared context. A pod models an application-specific “logical host” - it contains one or more application containers which are relatively tightly coupled — in a pre-container world, they would have executed on the same physical or virtual machine.<br>
+While Kubernetes supports more container runtimes than just Docker, Docker is the most commonly known runtime, and it helps to describe pods in Docker terms.<br>
+https://kubernetes.io/docs/user-guide/pods/#what-is-a-pod <br><br>
+“Kubernetes orchestrates, schedules, and manages pods. When we refer to an application running inside of Kubernetes, it’s running within a Docker container inside of a pod. A pod is given its own IP address, and all containers within the pod share this IP (which is different from plain Docker, where each container gets an IP address). When volumes are mounted to the pod, they are also shared between the individual Docker containers running in the pod.”<br>
+Excerpt From: Christian Posta. “Microservices for Java Developers.” iBooks. 
+
+### What is a Deployment? <br>
+
+A Deployment provides declarative updates for Pods and Replica Sets (the next-generation Replication Controller). You only need to describe the desired state in a Deployment object, and the Deployment controller will change the actual state to the desired state at a controlled rate for you. You can define Deployments to create new resources, or replace existing ones by new ones.<br>
+https://kubernetes.io/docs/user-guide/deployments/#what-is-a-deployment
+
+### What is a ReplicaSet? <br>
+“Kubernetes has a concept called ReplicationController that manages the number of replicas for a given set of microservices”
+
+Excerpt From: Christian Posta. “Microservices for Java Developers.” iBooks. 
+
+ReplicaSet is the next-generation Replication Controller. The only difference between a ReplicaSet and a Replication Controller right now is the selector support. ReplicaSet supports the new set-based selector requirements as described in the labels user guide whereas a Replication Controller only supports equality-based selector requirements.<br>
+
+A ReplicaSet ensures that a specified number of pod “replicas” are running at any given time. <br>
+https://kubernetes.io/docs/user-guide/replicasets/#what-is-a-replicaset
+
+### What is a Service? <br>
+Kubernetes Pods are mortal. They are born and when they die, they are not resurrected. ReplicationControllers in particular create and destroy Pods dynamically (e.g. when scaling up or down or when doing rolling updates). While each Pod gets its own IP address, even those IP addresses cannot be relied upon to be stable over time. This leads to a problem: if some set of Pods (let’s call them backends) provides functionality to other Pods (let’s call them frontends) inside the Kubernetes cluster, how do those frontends find out and keep track of which backends are in that set?<br><br>
+**Enter Services.**<br><br>
+A Kubernetes Service is an abstraction which defines a logical set of Pods and a policy by which to access them - sometimes called a micro-service. The set of Pods targeted by a Service is (usually) determined by a Label Selector
+
+### What is a Label? <br>
+Labels are key/value pairs that are attached to objects, such as pods. Labels are intended to be used to specify identifying attributes of objects that are meaningful and relevant to users, but which do not directly imply semantics to the core system. Labels can be used to organize and to select subsets of objects. Labels can be attached to objects at creation time and subsequently added and modified at any time. Each object can have a set of key/value labels defined. Each Key must be unique for a given object.
+```javascript
+"labels": {
+  "key1" : "value1",
+  "key2" : "value2"
+}
+```
+
+### Creating resources
