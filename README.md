@@ -38,8 +38,8 @@ This repository contains example projects for the different proposed components 
 
 
 ## Docker
-https://www.docker.com
 >"Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries – anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment."
+https://www.docker.com/what-docker
 
 The most of the projects that integrate this repository will be containerized in docker images. The images will be generated through spotify docker maven plugin https://github.com/spotify/docker-maven-plugin (current version: 0.4.13)
 
@@ -81,6 +81,7 @@ The current XML configuration describes how the image have to be build.
 <!-- The build will fail, if the config file doesn't exist. -->
 <useConfigFile>true</useConfigFile>
 ```
+>*You can modify the default configuration overriding in the subprojects the properties inherited from parent pom* 
 
 You can build a docker image of any subproject through (docker must be configured correctly):
 ```ssh
@@ -94,9 +95,35 @@ RUN sh -c 'touch /app.jar'
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
 VOLUME /tmp
 ```
-And a docker images with two tags will be created
+And a docker image with two tags will be created
 ```
 REPOSITORY                                                TAG                 IMAGE ID            CREATED             SIZE
 localhost:5000/mi-banco/configserver-mock-up              0.1.0-SNAPSHOT      a9b926686d10        2 days ago          234.9 MB
 localhost:5000/mi-banco/configserver-mock-up              latest              a9b926686d10        2 days ago          234.9 MB
 ```
+>Docker Registry
+What it is
+The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.
+https://docs.docker.com/registry/
+
+It is importan to notice that the name of the image has relevance. 
+The naming convention is: **REGISTRY[:PORT]/USER/REPO[:TAG]**
+The complete name of the image with its two tags are:
+```
+localhost:5000/mi-banco/configserver-mock-up:0.1.0-SNAPSHOT
+localhost:5000/mi-banco/configserver-mock-up:latest
+```
+The registry indicates where the image will be storage or download. 
+In that way if we execute the command **docker push**, docker will try to push the image into a docker registry located at `localhost:5000` 
+Subsequently docker will ask for the user `mi-banco` and finally will push the image `configserver-mock-up` in the registry.
+
+If we want to pull the image, docker will try to download the image according with the registry configured in the image's name.
+
+>NOTA
+If there isn't a registry in the image's name the registry by default is docker.io
+
+##### Kubernetes 
+Considerations
+>The default container image pull policy is `IfNotPresent`, which causes the Kubelet to not pull an image if it already exists. If you would like to always force a pull, you must specify a pull image policy of `Always` in your .yaml file (`imagePullPolicy: Always`) or specify a `:latest` tag on your image.
+That is, if you’re specifying an image with other than the `:latest` tag, e.g. `myimage:v1`, and there is an image update to that same tag, the Kubelet won’t pull the updated image. You can address this by ensuring that any updates to an image bump the image tag as well (e.g. `myimage:v2`), and ensuring that your configs point to the correct version.
+**Note**: you should avoid using :latest tag when deploying containers in production, because this makes it hard to track which version of the image is running and hard to roll back. https://kubernetes.io/docs/user-guide/config-best-practices/
