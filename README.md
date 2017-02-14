@@ -301,10 +301,111 @@ If you want to change this behavior, You can override the property: `<fabric8.ma
 
 Visit: https://kubernetes.io/docs/user-guide/config-best-practices/
 
+The final YAML generated at `target/classes/META-INF/fabric8/kubernetes.yml` with all the necessary resources will be:
+
+```YAML 
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 1cc6f03c60b72cf7ee4dcb2de39ca5a9fcc616aa
+      fabric8.io/git-branch: master
+    labels:
+      expose: "true"
+      owner: EVERTEC
+      phase: development
+      app: configserver-mock-up
+      product: Mi-Banco
+      tier: backend
+      provider: fabric8
+      project: configserver-mock-up
+      version: 0.1.0-SNAPSHOT
+      group: com.evertec.cibp.api
+    name: configserver
+  spec:
+    ports:
+    - port: 80
+      targetPort: 8888
+    selector:
+      project: configserver-mock-up
+      provider: fabric8
+      group: com.evertec.cibp.api
+    type: LoadBalancer
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 1cc6f03c60b72cf7ee4dcb2de39ca5a9fcc616aa
+      fabric8.io/git-branch: master
+      fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=configserver-mock-up&var-version=0.1.0-SNAPSHOT
+    labels:
+      owner: EVERTEC
+      phase: development
+      app: configserver-mock-up
+      product: Mi-Banco
+      tier: backend
+      provider: fabric8
+      project: configserver-mock-up
+      version: 0.1.0-SNAPSHOT
+      group: com.evertec.cibp.api
+    name: configserver
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        project: configserver-mock-up
+        provider: fabric8
+        group: com.evertec.cibp.api
+    template:
+      metadata:
+        annotations:
+          fabric8.io/git-commit: 1cc6f03c60b72cf7ee4dcb2de39ca5a9fcc616aa
+          fabric8.io/git-branch: master
+          fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=configserver-mock-up&var-version=0.1.0-SNAPSHOT
+        labels:
+          owner: EVERTEC
+          phase: development
+          app: configserver-mock-up
+          product: Mi-Banco
+          tier: backend
+          provider: fabric8
+          project: configserver-mock-up
+          version: 0.1.0-SNAPSHOT
+          group: com.evertec.cibp.api
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          image: localhost:5000/mi-banco/configserver-mock-up:0.1.0-SNAPSHOT
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 180
+          name: mi-banco-configserver-mock-up
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 30
+          securityContext:
+            privileged: false
+
+```
 
 
 
-The main commands of this plugin are:
+**The main commands of this plugin are**:
 - mvn fabric8:build which build the docker images (it is not its purpose at this moment. You can build the image through mvn docker:build)
 - mvn fabric8:resource which will generate the k8s/o7t descriptors in the path ${project}/target/classes/META-INF/fabric8
 - mvn fabric8:deploy this will deploy the resources in ks8/o7t
