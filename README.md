@@ -430,7 +430,7 @@ fabric8:debug
   
 In order to follow the best practices in kubernetes this project has configured some labels which will be added automatically.
 
-Is recommended that each child project override this labels according their specifications.  
+It is important that each child project override this labels according their specifications.  
 
 `<label.all.tier/>`
 
