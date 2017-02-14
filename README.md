@@ -438,4 +438,4 @@ It is important that each child project override this labels according their spe
 
 `<label.all.product/>`
 
->Additionally labels can be configured in the fragments files yml. Consider that labels and selector must be the same
+>Additional labels can be configured in the fragments files yml. Consider that labels and selector must be the same
