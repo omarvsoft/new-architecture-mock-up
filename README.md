@@ -208,8 +208,9 @@ https://kubernetes.io/docs/user-guide/labels/
 ### Creating resources
 With the aim of generating the resources that kubernetes requires in a fast way and with dynamic values according to with each project. 
 
-We use the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
 <img src="https://fabric8.io/images/fabric8_logo.svg" width="300"/>
+
+We use the fabric8 plugin https://maven.fabric8.io current version: 3.2.18.
 
 Prerequisites:
 - Connection to a docker daemon
