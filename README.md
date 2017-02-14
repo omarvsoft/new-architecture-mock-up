@@ -329,7 +329,7 @@ items:
   spec:
     ports:
     - port: 80
-      targetPort: 8888
+      targetPort: 8080
     selector:
       project: configserver-mock-up
       provider: fabric8
@@ -388,14 +388,14 @@ items:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8888
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 180
           name: mi-banco-configserver-mock-up
           readinessProbe:
             httpGet:
               path: /health
-              port: 8888
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 30
           securityContext:
