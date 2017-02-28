@@ -1,0 +1,18 @@
+server:
+  port: 8888
+security:
+  user:
+    name: ${SECRET_CONFIG_SERVER_USER}
+    password: ${SECRET_CONFIG_SERVER_PASSWORD}
+spring: 
+  cloud: 
+    config: 
+      fail-fast: true
+      server: 
+        git: 
+          clone-on-start: true
+          uri: ${SECRET_CONFIG_GIT_REPOSITORY}
+          username: ${SECRET_CONFIG_GIT_USERNAME}
+          password: ${SECRET_CONFIG_GIT_PASSWORD}
+          search-paths:
+            - '{application}'

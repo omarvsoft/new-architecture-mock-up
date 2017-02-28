@@ -31,13 +31,24 @@
 	<properties>
 		<label.all.tier>backend</label.all.tier>
 		<label.all.phase>development</label.all.phase>
-		<label.all.product>Mi-Banco</label.all.product>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-config-server</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.cloud</groupId> -->
+<!-- 			<artifactId>spring-cloud-config-monitor</artifactId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.cloud</groupId> -->
+<!-- 			<artifactId>spring-cloud-starter-bus-amqp</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 	</dependencies>
 
