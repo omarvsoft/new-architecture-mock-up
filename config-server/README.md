@@ -24,7 +24,7 @@ It is important to notice that the configuration server needs some environment v
   * SECRET_CONFIG_GIT_DEFAULT_USERNAME
   * SECRET_CONFIG_GIT_DEFAULT_PASSWORD
 
-Run in console:
+**Run in console:**
 ```SHELL
 java -jar -DSECRET_CONFIG_SERVER_USER=myuser \
 -DSECRET_CONFIG_SERVER_PASSWORD=mypassword \
@@ -38,11 +38,11 @@ java -jar -DSECRET_CONFIG_SERVER_USER=myuser \
 configserver-mock-up-0.1.0-SNAPSHOT.jar
 ```
 
-RUN in your IDE
+**IDE configuration**
 
 ![IDEnvironmet](src/main/doc/images/IDEnvironmet.png)
 
-> The SECRET prefix is important because that reflect that the variable will be provided by the Kubernetes SECRETS mechanism
+> The SECRET prefix is important because that reflect that the variable will be provided by the Kubernetes SECRETS mechanism. <br> Avoid replacing these values for text plain in the application.yml instead of that, you should set your environment as shown above
 
 
 
