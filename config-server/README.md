@@ -6,7 +6,6 @@ https://cloud.spring.io/spring-cloud-config/
 
 
 ## Start the server:
-___
 
 The server is a Spring Boot application so you can run it from your Console or IDE instead if you prefer (the main class is **com.evertec.cibp.configserver.Application**).
 
@@ -41,7 +40,7 @@ configserver-mock-up-0.1.0-SNAPSHOT.jar
 
 RUN in your IDE
 
-<image src="main/doc/images/IDEnvironmet.png"/>
+![IDEnvironmet](src/main/doc/images/IDEnvironmet.png)
 
 > The SECRET prefix is important because that reflect that the variable will be provided by the Kubernetes SECRETS mechanism
 
