@@ -4,6 +4,12 @@ security:
   user:
     name: ${SECRET_CONFIG_SERVER_USER}
     password: ${SECRET_CONFIG_SERVER_PASSWORD}
+encrypt:
+  key-store:
+    location: ${SECRET_KEY_STORE_LOCATION}
+    password: ${SECRET_KEY_STORE_PASSWORD}
+    alias: ${SECRET_KEY_STORE_ALIAS}
+    secret: ${SECRET_KEY_STORE_SECRET}
 spring: 
   cloud: 
     config: 
@@ -11,8 +17,12 @@ spring:
       server: 
         git: 
           clone-on-start: true
-          uri: ${SECRET_CONFIG_GIT_REPOSITORY}
-          username: ${SECRET_CONFIG_GIT_USERNAME}
-          password: ${SECRET_CONFIG_GIT_PASSWORD}
-          search-paths:
-            - '{application}'
+          uri: ${SECRET_CONFIG_GIT_DEFAULT_REPO}
+          username: ${SECRET_CONFIG_GIT_DEFAULT_USERNAME}
+          password: ${SECRET_CONFIG_GIT_DEFAULT_PASSWORD}
+          repos: 
+           test-springbootms: 
+            clone-on-start: true
+            uri: https://github.com/cesargomezvela/config-repo-test-springbootms.git
+            username: ${SECRET_CONFIG_GIT_USERNAME}
+            password: ${SECRET_CONFIG_GIT_PASSWORD}
