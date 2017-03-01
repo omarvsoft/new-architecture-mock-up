@@ -14,8 +14,8 @@ It is important to notice that the configuration server needs some environment v
 * Basic autentication
   * SECRET_CONFIG_SERVER_USER
   * SECRET_CONFIG_SERVER_PASSWORD
-* Encrypt key-store (It permit the encryption and decryption of sensitive information in the Git repository.)
-  * SECRET_KEY_STORE_LOCATION (the location where the Java Key Store is located) 
+* Encrypt key-store (It permits the encryption and decryption of sensitive information in the Git repository.)
+  * SECRET_KEY_STORE_LOCATION (the path where the Java Key Store is located) 
   * SECRET_KEY_STORE_PASSWORD (the password of the key store)
   * SECRET_KEY_STORE_ALIAS (the alias of the key store)
   * SECRET_KEY_STORE_SECRET (the secret of the key store)
