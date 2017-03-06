@@ -168,7 +168,7 @@
     	<maven.compiler.target>1.8</maven.compiler.target>
     	
 		<!-- Spring boot -->
-		<springframework.boot.version>1.4.3.RELEASE</springframework.boot.version>
+		<springframework.boot.version>1.5.1.RELEASE</springframework.boot.version>
 		
 		<!-- Spring cloud -->
 		<springframework.cloud.version>Camden.SR4</springframework.cloud.version>
@@ -205,10 +205,20 @@
 		<label.all.phase>development</label.all.phase>
 		<label.all.product>Mi-Banco</label.all.product>
 		
+		<!-- New Relic -->
+		<newrelic.version>3.27.0</newrelic.version>
 	</properties>
 
 
 	<dependencies>
+		<!-- The newrelic dependency. -->
+		<dependency>
+			<groupId>com.newrelic.agent.java</groupId>
+			<artifactId>newrelic-java</artifactId>
+			<version>${newrelic.version}</version>
+			<scope>provided</scope>
+			<type>zip</type>
+		</dependency>
 		<!-- TEST -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -364,7 +374,36 @@
 <!-- 					<useConfigFile>true</useConfigFile> -->
 				</configuration>
 			</plugin>
-	
+			
+			<!-- Maven-dependency::plugin[] -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>unpack-zip</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.newrelic.agent.java</groupId>
+									<artifactId>newrelic-java</artifactId>
+									<version>${newrelic.version}</version>
+									<type>zip</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>target</outputDirectory>
+									<destFileName>newrelic</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>target/newrelic-unzip</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
