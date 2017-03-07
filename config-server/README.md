@@ -26,15 +26,19 @@ It is important to notice that the configuration server needs some environment v
 
 **Run in console:**
 ```SHELL
-java -jar -DSECRET_CONFIG_SERVER_USER=myuser \
--DSECRET_CONFIG_SERVER_PASSWORD=mypassword \
--DSECRET_KEY_STORE_LOCATION=file:///keystore/configServer.jks \
--DSECRET_KEY_STORE_PASSWORD=letmein \
--DSECRET_KEY_STORE_ALIAS=configServKey \
--DSECRET_KEY_STORE_SECRET=DevConfigServPass \
--DSECRET_CONFIG_GIT_DEFAULT_REPO=https://github.com/cesargomezvela/config-repo-default.git \
--DSECRET_CONFIG_GIT_DEFAULT_USERNAME=muck-up \
--DSECRET_CONFIG_GIT_DEFAULT_PASSWORD=co-qui2017 \
+java -jar -DCONFIG_SERVER_USER=myuser \
+-DCONFIG_SERVER_PASSWORD=mypassword \
+-DKEY_STORE_LOCATION=file:///keystore/configServer.jks \
+-DKEY_STORE_PASSWORD=letmein \
+-DKEY_STORE_ALIAS=configServKey \
+-DKEY_STORE_SECRET=DevConfigServPass \
+-DGIT_DEFAULT_REPO_URI=https://github.com/cesargomezvela/config-repo-default.git \
+-DGIT_DEFAULT_REPO_USERNAME=muck-up \
+-DGIT_DEFAULT_REPO_PASSWORD=co-qui2017 \
+-Dnewrelic.config.file=/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/example_newrelic.yml \
+-Dnewrelic.environment=development \
+-Dnewrelic.logfile=/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/logs/newrelic_config_agent.log \
+-javaagent:/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/newrelic-java-3.27.0/newrelic.jar \
 configserver-mock-up-0.1.0-SNAPSHOT.jar
 ```
 
@@ -66,3 +70,25 @@ spring:
         git:
           uri: https://github.com/spring-cloud-samples/config-repo
 ```
+
+
+![NewRelic](src/main/doc/images/NewRelic.png)
+
+New Relic has been chosen as Microservices monitoring tool. This section describe how to start up New Relic in the configserver.
+
+Resources:
+* src/main/newrelic/newrelic.yml 
+	
+     The New Relic Java agent reads its configuration from the newrelic.yml file. By default, the agent looks for this file in the directory that contains newrelic.jar. New Relic has a default newrelic.yml, the present newrelic.yml is a custom file configured especially to the configserver.
+
+	The parameter `#license_key: '1b1f5a9933fsd8b7ce60c0406c73626hsy'` has been commented because this parameter will be set as an environment variable (see the docker section and kubernetes environment variables configuration)
+    
+    The file has been customized to support different environments such as development, QA, production and PILOT. 
+    We can Use `-Dnewrelic.environment=<environment>`  on the Java startup command line to set the environment. We do this task through docker and kubernetes environment variables configuration
+    
+   It has been added two app names CONFIGURATION-SERVER and CIBP-NEW-ARCH. This configuration will report in two sections in the New Relic console one specially designed for the configserver application and the other is where all the CIBP microservices will report.
+    
+  ![NewRelic_namespaces](src/main/doc/images/NewRelic_namespaces.png)
+  
+* sdf
+* sdf
