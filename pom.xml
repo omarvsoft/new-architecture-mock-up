@@ -181,7 +181,7 @@
 		<!-- Spotify maven plugin -->
 		<spotify.plugin.version>0.4.13</spotify.plugin.version>
 		<spotify.docker.directory>src/main/docker</spotify.docker.directory>
-		<spotify.docker.baseImage>frolvlad/alpine-oraclejdk8:slim</spotify.docker.baseImage>
+		<spotify.docker.baseImage>openjdk:8u121-jre-alpine</spotify.docker.baseImage>
 		<spotify.docker.entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Dnewrelic.environment=$PROFILE_ACTIVE -Dnewrelic.config.license_key=$NEW_RELIC_LICENSE -javaagent:/newrelic/newrelic.jar -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</spotify.docker.entryPoint>
 		
 		<!-- Fabric8 maven plugin -->
