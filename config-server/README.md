@@ -91,7 +91,7 @@ New Relic has been chosen as Microservices monitoring tool. This section describ
 		<type>zip</type>
 	</dependency>
      ```
-    The next plugin will unzips the New Relic zip file in `target/newrelic-unzip/newrelic`. This directory will delivered to the docker image and its newrelic.yml will be replaced with a customized newrelic.yml file
+    The next plugin will unzips the New Relic zip file in `target/newrelic-unzip/newrelic`. This directory will be delivered to the docker image and its newrelic.yml will be replaced with a customized newrelic.yml file
     ```xml 
     <!-- Maven-dependency::plugin[] -->
 	<plugin>
