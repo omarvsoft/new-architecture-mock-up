@@ -1,9 +1,45 @@
 spec:
-  replicas: 1
+  replicas: 2
   template:
     spec:
       containers:
       - env:
+        env:
+          - name: CONFIG_SERVER_USER
+            valueFrom:
+              secretKeyRef: 
+                key: username
+                name: config-server-secrets
+          - name: CONFIG_SERVER_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: config-server-secrets
+          - name: GIT_DEFAULT_REPO_URI
+            valueFrom:
+              secretKeyRef: 
+                key: uri
+                name: git-default-repo-secrets
+          - name: GIT_DEFAULT_REPO_USERNAME
+            valueFrom:
+              secretKeyRef: 
+                key: uri
+                name: git-default-repo-secrets
+          - name: GIT_DEFAULT_REPO_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: git-default-repo-secrets
+          - name: NEW_RELIC_LICENSE
+            valueFrom:
+              secretKeyRef: 
+                key: license
+                name: newrelic-license-key-secrets
+          - name: PROFILE_ACTIVE
+            valueFrom:
+              configMapKeyRef: 
+                key: profile
+                name: profile-active-configmap
         livenessProbe:
           httpGet:
               path: /health

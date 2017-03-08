@@ -2,27 +2,27 @@ server:
   port: 8888
 security:
   user:
-    name: ${SECRET_CONFIG_SERVER_USER}
-    password: ${SECRET_CONFIG_SERVER_PASSWORD}
-encrypt:
-  key-store:
-    location: ${SECRET_KEY_STORE_LOCATION}
-    password: ${SECRET_KEY_STORE_PASSWORD}
-    alias: ${SECRET_KEY_STORE_ALIAS}
-    secret: ${SECRET_KEY_STORE_SECRET}
+    name: ${CONFIG_SERVER_USER}
+    password: ${CONFIG_SERVER_PASSWORD}
+#encrypt:
+  #key-store:
+    #location: ${KEY_STORE_LOCATION}
+    #password: ${KEY_STORE_PASSWORD}
+    #alias: ${KEY_STORE_ALIAS}
+    #secret: ${KEY_STORE_SECRET}
 spring: 
   cloud: 
     config: 
       fail-fast: true
       server: 
-        git: 
+       git: 
           clone-on-start: true
-          uri: ${SECRET_CONFIG_GIT_DEFAULT_REPO}
-          username: ${SECRET_CONFIG_GIT_DEFAULT_USERNAME}
-          password: ${SECRET_CONFIG_GIT_DEFAULT_PASSWORD}
+          uri: ${GIT_DEFAULT_REPO_URI}
+          username: ${GIT_DEFAULT_REPO_USERNAME}
+          password: ${GIT_DEFAULT_REPO_PASSWORD}
           repos: 
            test-springbootms: 
             clone-on-start: true
             uri: https://github.com/cesargomezvela/config-repo-test-springbootms.git
-            username: ${SECRET_CONFIG_GIT_USERNAME}
-            password: ${SECRET_CONFIG_GIT_PASSWORD}
+            username: ${GIT_DEFAULT_REPO_USERNAME}
+            password: ${GIT_DEFAULT_REPO_PASSWORD}

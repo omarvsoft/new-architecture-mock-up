@@ -182,7 +182,7 @@
 		<spotify.plugin.version>0.4.13</spotify.plugin.version>
 		<spotify.docker.directory>src/main/docker</spotify.docker.directory>
 		<spotify.docker.baseImage>frolvlad/alpine-oraclejdk8:slim</spotify.docker.baseImage>
-		<spotify.docker.entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</spotify.docker.entryPoint>
+		<spotify.docker.entryPoint>[ "sh", "-c", "java $JAVA_OPTS -Dnewrelic.environment=$PROFILE_ACTIVE -Dnewrelic.config.license_key=$NEW_RELIC_LICENSE -javaagent:/newrelic/newrelic.jar -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]</spotify.docker.entryPoint>
 		
 		<!-- Fabric8 maven plugin -->
 		<fabric8.maven.plugin.version>3.2.18</fabric8.maven.plugin.version>
@@ -367,6 +367,15 @@
 						<resource>
 							<directory>${project.build.directory}</directory>
 							<include>${project.build.finalName}.jar</include>
+						</resource>
+						<resource>
+							<targetPath>/newrelic</targetPath>
+							<directory>${project.build.directory}/newrelic-unzip/newrelic</directory>
+						</resource>
+						<resource>
+							<directory>src/main/newrelic</directory>
+							<targetPath>/newrelic</targetPath>
+							<include>newrelic.yml</include>
 						</resource>
 					</resources>
 <!-- 					Registry using ~/.docker/config.json file for authentication Hint: -->
