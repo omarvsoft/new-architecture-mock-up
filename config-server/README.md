@@ -281,14 +281,18 @@ New Relic has been chosen as Microservices monitoring tool. This section describ
    It has been added two app names CONFIGURATION-SERVER and CIBP-NEW-ARCH. This configuration will report in two sections in the New Relic console one specially designed for the configserver application and the other is where all the CIBP microservices will report.
     
   ![NewRelic_namespaces](src/main/doc/images/NewRelic_namespaces.png)
-
+  
+  
+* Log file
+  
+  New Relic's Java agent stores log files in the `logs` directory. The Java agent creates this directory in the same location used for the newrelic.jar 
 
 With the above configuration, New Relic will be able to report statistics when the microservice be deployed in docker or kubernetes and won't be able in an IDE development environment.
 
 If you need to configure your IDE to report in New Relic, you need to:
-* Use the **target/newrelic-unzip/newrelic** directory (or your own New Relic distribution)
-* Replace the newrelic.yml with your own newrelic.yml (with a valid license key)
-* Optionally, you indicate where is the newrelic.yml through the parameter newrelic.config.file
-* Finally, set the **-javaagent** and the **newrelic.environment** parameters in the IDE.
+* Use the `target/newrelic-unzip/newrelic` directory (or your own New Relic distribution)
+* Replace the `newrelic.yml` with your own `newrelic.yml` (with a valid license key)
+* Optionally, you can indicate where is the `newrelic.yml` through the parameter `newrelic.config.file`
+* Finally, set the `-javaagent` and the `newrelic.environment` parameters in the IDE.
 
 ![NewRelic_IDEEnv](src/main/doc/images/NewRelic_IDEEnv.png)
