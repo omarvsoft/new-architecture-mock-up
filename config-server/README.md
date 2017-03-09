@@ -163,7 +163,7 @@ As you can notice the values will be taken from environment variables in order t
 
 ### Kubernetes configuration
 
-On the side of kubernetes it is necessary to create the SECRETS and map them with the `KEY_STORE_LOCATION`, `KEY_STORE_PASSWORD`, `KEY_STORE_ALIAS` and `KEY_STORE_SECRET` environment variables. Also, you have to indicate where will be mounting the keystore.
+On the side of kubernetes also it is necessary to create the SECRETS and map them with the `KEY_STORE_LOCATION`, `KEY_STORE_PASSWORD`, `KEY_STORE_ALIAS` and `KEY_STORE_SECRET` environment variables. Also, you have to indicate where will be mounting the keystore.
 
 *config-server-cryptography-secrets.yml*
 
