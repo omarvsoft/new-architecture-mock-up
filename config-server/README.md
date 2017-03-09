@@ -141,6 +141,8 @@ keytool -genkeypair -alias configServAlias -keyalg RSA \
   -keypass DevConfigServSecret -keystore configServer.jks -storepass letmeinPassword  \
   -validity 3650
 ```
+> **NOTICE:** Each certificate is valid only for a limited amount of time. `validity` describe how long the certificate is valid in terms of days
+
 The `configServer.jks` needs to be exposed as a SECRET in kubernetes through the command:
 ```shell
 kubectl create secret generic config-server-keystore --from-file=/Users/et41451/Documents/keystore/configServer.jks
