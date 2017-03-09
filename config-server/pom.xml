@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ~ EVERTEC Inc. 2017 ~ In order to change the version of spring-boot 
-	or spring-cloud, you should OVERRIDE the following properties from the parent 
-	pom ~ <springframework.boot.version/> ~ <springframework.cloud.version/> 
-	~ Additional resources can be modified through override parents properties. 
-	~ It is recommended override the next kubernetes labels to configure this 
-	project with its own specifications. ~ <label.all.tier/> ~ <label.all.phase/> 
-	~ <label.all.product/> ~ Additionally more labels can be configured in the 
-	fragments files yml under src/main/fabric8 folder ~ If you add more labels 
-	to yml files, You should consider that labels and selector must be the same -->
+
+<!-- 
+	~ EVERTEC Inc. 2017
+	
+	~ In order to change the version of spring-boot or spring-cloud, you should OVERRIDE the following properties from the parent pom 
+	~ <springframework.boot.version/> 
+	~ <springframework.cloud.version/>
+	~ Additional resources can be modified through override parents properties.
+	
+	~ It is recommended override the next kubernetes labels to configure this project with its own specifications.
+	~ <label.all.tier/>
+	~ <label.all.phase/>
+	~ <label.all.product/>
+	~ Additionally more labels can be configured in the fragments files yml under src/main/fabric8 folder
+	~ If you add more labels to yml files, You should consider that labels and selector must be the same 
+-->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -38,5 +46,57 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<!-- Spotify::plugin[] -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${spotify.plugin.version}</version>
+				<configuration>
+					<!-- <dockerDirectory>${spotify.docker.directory}</dockerDirectory> -->
+					<imageName>${docker.image.name}</imageName>
+					<baseImage>${spotify.docker.baseImage}</baseImage>
+					<volumes>
+						<volume>/tmp</volume>
+					</volumes>
+					<runs>
+						<run>mv ${project.build.finalName}.jar app.jar</run>
+						<run>sh -c 'touch /app.jar'</run>
+					</runs>
+					<env>
+					</env>
+					<entryPoint>${spotify.docker.entryPoint}</entryPoint>
+					<forceTags>true</forceTags>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+						<imageTag>latest</imageTag>
+					</imageTags>
+					<resources>
+						<resource>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+						<resource>
+							<targetPath>/newrelic</targetPath>
+							<directory>${project.build.directory}/newrelic-unzip/newrelic</directory>
+						</resource>
+						<resource>
+							<directory>src/main/newrelic</directory>
+							<targetPath>/newrelic</targetPath>
+							<include>newrelic.yml</include>
+						</resource>
+						<resource>
+							<targetPath>/usr/lib/jvm/java-1.8-openjdk/jre/lib/security</targetPath>
+							<directory>src/main/UnlimitedJCEPolicyJDK8</directory>
+						</resource>
+					</resources>
+<!-- 					Registry using ~/.docker/config.json file for authentication Hint: -->
+<!-- 						The build will fail, if the config file doesn't exist. -->
+<!-- 					<useConfigFile>true</useConfigFile> -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

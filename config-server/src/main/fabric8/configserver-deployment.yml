@@ -1,5 +1,5 @@
 spec:
-  replicas: 2
+  replicas: 1
   template:
     spec:
       containers:
@@ -15,6 +15,26 @@ spec:
               secretKeyRef: 
                 key: password
                 name: config-server-secrets
+          - name: KEY_STORE_LOCATION
+            valueFrom:
+              secretKeyRef: 
+                key: location
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_ALIAS
+            valueFrom:
+              secretKeyRef: 
+                key: alias
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_SECRET
+            valueFrom:
+              secretKeyRef: 
+                key: secret
+                name: config-server-cryptography-secrets
           - name: GIT_DEFAULT_REPO_URI
             valueFrom:
               secretKeyRef: 
@@ -40,6 +60,10 @@ spec:
               configMapKeyRef: 
                 key: profile
                 name: profile-active-configmap
+        volumeMounts: 
+        - mountPath: /keystore
+          name: java-keystore
+          readOnly: true
         livenessProbe:
           httpGet:
               path: /health
@@ -52,3 +76,7 @@ spec:
               port: 8888
               scheme: HTTP
           initialDelaySeconds: 30
+      volumes: 
+      - name: java-keystore
+        secret: 
+          secretName: config-server-keystore

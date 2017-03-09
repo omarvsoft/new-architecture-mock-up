@@ -4,12 +4,12 @@ security:
   user:
     name: ${CONFIG_SERVER_USER}
     password: ${CONFIG_SERVER_PASSWORD}
-#encrypt:
-  #key-store:
-    #location: ${KEY_STORE_LOCATION}
-    #password: ${KEY_STORE_PASSWORD}
-    #alias: ${KEY_STORE_ALIAS}
-    #secret: ${KEY_STORE_SECRET}
+encrypt:
+  key-store: 
+    location: ${KEY_STORE_LOCATION}
+    password: ${KEY_STORE_PASSWORD}
+    alias: ${KEY_STORE_ALIAS}
+    secret: ${KEY_STORE_SECRET}
 spring: 
   cloud: 
     config: 

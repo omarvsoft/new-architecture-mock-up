@@ -72,6 +72,150 @@ spring:
 ```
 
 
+## Cryptography 
+
+> **Prerequisites:** to use the encryption and decryption features a Java certificate has to be created and installed in kubernetes. Additionally, the kubernetes SECRETS for location, password, alias and secret have to be created too.
+
+The main advantage of this set up is that the property values don’t have to be in plain text when they are "at rest" (e.g. in a git repository). The values that start with `{cipher}` will be decrypted before sending to clients over HTTP. If a value cannot be decrypted it is removed from the property source and an additional property is added with the same key, but prefixed with "invalid." and a value that means "not applicable" (usually "<n/a>"). This is largely to prevent cipher text being used as a password and accidentally leaking.
+
+
+If you are setting up a remote config repository for config client applications it might contain an application.yml like this, for instance:
+
+
+*application.yml*
+```YAML
+spring:
+  datasource:
+    username: dbuser
+    password: '{cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ'
+```
+
+Encrypted values in a .properties file must not be wrapped in quotes, otherwise the value will not be decrypted:
+
+
+*application.properties*
+```properties
+spring.datasource.username: dbuser
+spring.datasource.password: {cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
+```
+You can safely push this plain text to a shared git repository and the secret password is protected.
+
+The server also exposes `/encrypt` and `/decrypt` endpoints (on the assumption that these will be secured and only accessed by authorized agents). If you are editing a remote config file you can use the Config Server to encrypt values by POSTing to the `/encrypt` endpoint, e.g.
+
+```shell
+curl http://myuser:mypassword@172.17.0.3:8888/encrypt -d valueToEncrypt
+```
+
+> **NOTE:** If the value you are encrypting has characters in it that need to be URL encoded you should use the `--data-urlencode` option to curl to make sure they are encoded properly.
+
+The inverse operation is also available via `/decrypt` (provided the server is configured with a symmetric key or a full key pair):
+
+```shell
+curl http://myuser:mypassword@172.17.0.3:8888/decrypt -d AQAS1z38vdbwETz6YQVEkbYriSLI6Nu+duBqSwjoSHMU/qAVctEqvU9xmn8TbaBUed1Q+0o4JqONUi5Q+cKLvDzA/ItIUbyE6Sg3274ByKGjIvdr6Rb5VHDcGGyFMZbHlCVC/wi1YweI8lqT/IDYXoex/D7H0D++hGNFE7edVYppEVvn1N0c1Smxh0IXN6CjGFd5yMGSYg1d41AVBD9ucN8k3jlPzYjIV6xGzI70W54XuMmFwBkr/kR8SHmu4HnvHEqDFOnVVQLHr8K6YIl/i4uVsQGWNTMMagWVtVANoujnW2gxtK5aTFIT2pbDeGBh5atu+j0TaFi9gN7mo8sp5lfBVNbCkLvL0ZMB7KwZipOIe6WmdvBe474WkVjE2WXG++E=
+```
+
+> **TIP:** If you are testing like this with curl, then use --data-urlencode (instead of -d) or set an explicit Content-Type: text/plain to make sure curl encodes the data correctly when there are special characters ('+' is particularly tricky).
+
+Take the encrypted value and add the `{cipher}` prefix before you put it in the YAML or properties file, and before you commit and push it to a remote repository.
+<br><br>
+
+
+### Key Management
+
+The Config Server use an asymmetric RSA key pair.
+
+To configure an asymmetric key you can create a keystore (e.g. as created by the keytool utility that comes with the JDK). The keystore properties are configured in the `application.yml` under encrypt.keyStore.* with the values:
+
+* `location` (a Resource location),
+* `password` (to unlock the keystore) and
+* `alias` (to identify which key in the store is to be used).
+* `secret` (key password)
+
+### Creating a Key Store for Testing
+
+To create a keystore for testing you can do something like this:
+
+```shell
+keytool -genkeypair -alias configServAlias -keyalg RSA \
+  -dname "CN=Configuration Server,OU=MiBanco,O=EVERTEC,L=San Juan,S=Puerto Rico,C=PR" \
+  -keypass DevConfigServSecret -keystore configServer.jks -storepass letmeinPassword  \
+  -validity 3650
+```
+The `configServer.jks` needs to be exposed as a SECRET in kubernetes through the command:
+```shell
+kubectl create secret generic config-server-keystore --from-file=/Users/et41451/Documents/keystore/configServer.jks
+```
+
+The `application.yml` in the configserver
+```YAML
+encrypt:
+  key-store: 
+    location: ${KEY_STORE_LOCATION}
+    password: ${KEY_STORE_PASSWORD}
+    alias: ${KEY_STORE_ALIAS}
+    secret: ${KEY_STORE_SECRET}
+```
+
+As you can notice the values will be taken from environment variables in order to can run the application in any environment. Actually, these variables will be set as SECRETS inside kubernetes.
+
+
+### Kubernetes configuration
+
+On the side of kubernetes it is necessary to create the SECRETS and map them with the `KEY_STORE_LOCATION`, `KEY_STORE_PASSWORD`, `KEY_STORE_ALIAS` and `KEY_STORE_SECRET` environment variables. Also, you have to indicate where will be mounting the keystore.
+
+*config-server-cryptography-secrets.yml*
+
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: config-server-cryptography-secrets
+type: Opaque
+data: 
+  location: ZmlsZTovLy9rZXlzdG9yZS9jb25maWdTZXJ2ZXIuamtz
+  alias: Y29uZmlnU2VydktleQ==
+  password: bGV0bWVpbg==
+  secret: RGV2Q29uZmlnU2VydlBhc3M=
+```
+
+`configserver-deployment.yml` variables - secrets mapping
+
+```YAML
+- name: KEY_STORE_LOCATION
+  valueFrom:
+    secretKeyRef: 
+      key: location
+      name: config-server-cryptography-secrets
+- name: KEY_STORE_PASSWORD
+  valueFrom:
+    secretKeyRef: 
+      key: password
+      name: config-server-cryptography-secrets
+- name: KEY_STORE_ALIAS
+  valueFrom:
+    secretKeyRef: 
+      key: alias
+      name: config-server-cryptography-secrets
+- name: KEY_STORE_SECRET
+  valueFrom:
+    secretKeyRef: 
+      key: secret
+      name: config-server-cryptography-secrets
+```
+`configserver-deployment.yml` mounting the keystore
+```YAML
+  volumeMounts:
+  - mountPath: /keystore
+    name: java-keystore
+    readOnly: true
+volumes:
+- name: java-keystore
+  secret:
+    secretName: config-server-keystore
+```
+> **NOTICE:** The `config-server-keystore` is the secret of the `configServer.jks` created before
+
+
 ![NewRelic](src/main/doc/images/NewRelic.png)
 
 New Relic has been chosen as Microservices monitoring tool. This section describe how to start up New Relic in the configserver.
