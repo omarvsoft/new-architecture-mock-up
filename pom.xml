@@ -171,7 +171,7 @@
 		<springframework.boot.version>1.5.1.RELEASE</springframework.boot.version>
 		
 		<!-- Spring cloud -->
-		<springframework.cloud.version>Camden.SR4</springframework.cloud.version>
+		<springframework.cloud.version>Camden.SR5</springframework.cloud.version>
     	
     	<!-- Docker image name -->
     	<docker.image.registry>localhost:5000</docker.image.registry>
@@ -370,7 +370,7 @@
 						</resource>
 						<resource>
 							<targetPath>/newrelic</targetPath>
-							<directory>${project.build.directory}/newrelic-unzip/newrelic</directory>
+							<directory>${project.build.directory}/newrelic</directory>
 						</resource>
 						<resource>
 							<directory>src/main/newrelic</directory>
@@ -388,13 +388,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.6</version>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>unpack-zip</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>unpack-dependencies</goal>
+							<goal>unpack</goal>
 						</goals>
 						<configuration>
 							<artifactItems>
@@ -408,7 +408,6 @@
 									<destFileName>newrelic</destFileName>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>target/newrelic-unzip</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
