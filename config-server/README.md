@@ -249,7 +249,7 @@ New Relic has been chosen as Microservices monitoring tool. This section describ
 				<id>unpack-zip</id>
 				<phase>prepare-package</phase>
 				<goals>
-					<goal>unpack-dependencies</goal>
+					<goal>unpack</goal>
 				</goals>
 				<configuration>
 					<artifactItems>
