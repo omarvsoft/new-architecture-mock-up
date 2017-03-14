@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	​
+	<property name="spring.application.name" value="ConfigServer"/>
+	
+	<!-- Console Custom Pattern -->
+	<property 
+		name="CONSOLE_LOG_PATTERN"
+		value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([${spring.application.name}]){magenta} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+	<!-- AMQP Custom Pattern -->
+	<property 
+		name="AMQP_LOG_PATTERN"
+		value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([${spring.application.name}]){magenta} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+	<!-- Appender to log to console -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<!-- Minimum logging level to be presented in the console logs -->
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<appender name="AMQP"
+		class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+		<layout>
+			<pattern>${AMQP_LOG_PATTERN}</pattern>
+		</layout>
+		
+		<!-- RabbitMQ connection -->	
+<!-- 		<host>172.29.1.81</host> -->
+		<host>${LOGBACK_AMQP_HOST}</host>
+		<port>${LOGBACK_AMQP_PORT}</port>
+		<username>${LOGBACK_AMQP_USER}</username>
+		<password>${LOGBACK_AMQP_PASSWORD}</password>
+		
+		<!-- RabbitMQ exchange configuration -->
+		<exchangeName>${LOGBACK_AMQP_EXCHANGE_NAME}</exchangeName>
+		<exchangeType>${LOGBACK_AMQP_EXCHANGE_TYPE}</exchangeType>
+		<deliveryMode>${LOGBACK_AMQP_DELIVERY_MODE}</deliveryMode>
+		<senderPoolSize>${LOGBACK_AMQP_SENDER_POOL_SIZE}</senderPoolSize>
+		<maxSenderRetries>${LOGBACK_AMQP_MAX_SENDER_RETRIES}</maxSenderRetries>
+		<routingKeyPattern>${LOGBACK_ROUTING_KEY_PATTERN}</routingKeyPattern>
+		<declareExchange>${LOGBACK_DECLARE_EXCHANGE}</declareExchange>
+		
+		<applicationId>ConfigServer</applicationId>
+		<generateId>true</generateId>
+		<charset>UTF-8</charset>
+	</appender>
+	​
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<!-- uncomment this to log to an AMQP -->
+		 <appender-ref ref="AMQP"/>
+	</root>
+</configuration>

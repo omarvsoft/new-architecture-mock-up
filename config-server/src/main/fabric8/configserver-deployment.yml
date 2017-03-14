@@ -60,6 +60,61 @@ spec:
               configMapKeyRef: 
                 key: profile
                 name: profile-active-configmap
+          - name: LOGBACK_AMQP_HOST
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-host
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_PORT
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-port
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_USER
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-user
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-password
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_EXCHANGE_NAME
+            valueFrom:
+              configMapKeyRef: 
+                key: exchange-name
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_EXCHANGE_TYPE
+            valueFrom:
+              configMapKeyRef: 
+                key: exchange-type
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_DELIVERY_MODE
+            valueFrom:
+              configMapKeyRef: 
+                key: delivery-mode
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_SENDER_POOL_SIZE
+            valueFrom:
+              configMapKeyRef: 
+                key: senderpool-size
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_MAX_SENDER_RETRIES
+            valueFrom:
+              configMapKeyRef: 
+                key: maxsender-retries
+                name: logback-amqp-configmaps
+          - name: LOGBACK_ROUTING_KEY_PATTERN
+            valueFrom:
+              configMapKeyRef: 
+                key: routingkey-pattern
+                name: logback-amqp-configmaps
+          - name: LOGBACK_DECLARE_EXCHANGE
+            valueFrom:
+              configMapKeyRef: 
+                key: declare-exchange
+                name: logback-amqp-configmaps
         volumeMounts: 
         - mountPath: /keystore
           name: java-keystore

@@ -44,6 +44,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+			<exclusions>
+			</exclusions>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -79,7 +89,7 @@
 						</resource>
 						<resource>
 							<targetPath>/newrelic</targetPath>
-							<directory>${project.build.directory}/newrelic-unzip/newrelic</directory>
+							<directory>${project.build.directory}/newrelic</directory>
 						</resource>
 						<resource>
 							<directory>src/main/newrelic</directory>
@@ -91,9 +101,9 @@
 							<directory>src/main/UnlimitedJCEPolicyJDK8</directory>
 						</resource>
 					</resources>
-<!-- 					Registry using ~/.docker/config.json file for authentication Hint: -->
-<!-- 						The build will fail, if the config file doesn't exist. -->
-<!-- 					<useConfigFile>true</useConfigFile> -->
+					<!-- Registry using ~/.docker/config.json file for authentication Hint: -->
+					<!-- The build will fail, if the config file doesn't exist. -->
+					<!-- <useConfigFile>true</useConfigFile> -->
 				</configuration>
 			</plugin>
 		</plugins>

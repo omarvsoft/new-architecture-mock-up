@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata: 
+  name: logback-amqp-configmaps
+data:
+  exchange-name: cibp-log-02
+  exchange-type: topic
+  delivery-mode: NON_PERSISTENT
+  senderpool-size: "3"
+  maxsender-retries: "3"
+  routingkey-pattern: test
+  declare-exchange: "true"

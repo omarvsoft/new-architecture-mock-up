@@ -11,6 +11,8 @@ encrypt:
     alias: ${KEY_STORE_ALIAS}
     secret: ${KEY_STORE_SECRET}
 spring: 
+  application:
+    name: ConfigServer
   cloud: 
     config: 
       fail-fast: true
