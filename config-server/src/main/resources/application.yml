@@ -4,6 +4,10 @@ security:
   user:
     name: ${CONFIG_SERVER_USER}
     password: ${CONFIG_SERVER_PASSWORD}
+management:
+  health:
+    rabbit:
+      enabled: false
 encrypt:
   key-store: 
     location: ${KEY_STORE_LOCATION}

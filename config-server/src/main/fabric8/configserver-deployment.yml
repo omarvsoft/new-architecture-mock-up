@@ -119,6 +119,9 @@ spec:
         - mountPath: /keystore
           name: java-keystore
           readOnly: true
+        resources:
+          limits:
+            memory: 700Mi
         livenessProbe:
           httpGet:
               path: /health
