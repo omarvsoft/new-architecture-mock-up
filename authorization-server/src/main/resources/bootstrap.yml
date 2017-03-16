@@ -1,9 +1,15 @@
-spring:
+spring: 
+  profiles:
+    active: ${PROFILE_ACTIVE}
   application:
-    name: authorization_server
+    name: authorization-server
   cloud:
     config:
-      uri: http://localhost:8888
-      profile: development
+      uri: ${CONFIG_SERVER_URI}
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}
+      profile: ${PROFILE_ACTIVE}
+      label: ${CONFIG_SERVER_LABEL:master}
+      fail-fast: true
 server:
   port: 9090

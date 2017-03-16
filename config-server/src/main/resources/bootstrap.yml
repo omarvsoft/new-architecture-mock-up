@@ -1,0 +1,47 @@
+server:
+  port: 8888
+security:
+  user:
+    name: ${CONFIG_SERVER_USER}
+    password: ${CONFIG_SERVER_PASSWORD}
+management:
+  health:
+    rabbit:
+      enabled: false
+encrypt:
+  key-store: 
+    location: ${KEY_STORE_LOCATION}
+    password: ${KEY_STORE_PASSWORD}
+    alias: ${KEY_STORE_ALIAS}
+    secret: ${KEY_STORE_SECRET}
+spring: 
+  application:
+    name: configserver
+  profiles:
+    active: ${PROFILE_ACTIVE}
+  cloud: 
+    config: 
+      fail-fast: true
+      server: 
+        git: 
+          clone-on-start: true
+          uri: ${GIT_DEFAULT_REPO_URI}
+          username: ${GIT_DEFAULT_REPO_USERNAME}
+          password: ${GIT_DEFAULT_REPO_PASSWORD}
+          search-paths:
+          - /*
+          repos: 
+            authorization-server:
+              clone-on-start: true
+              uri: ${GIT_AUTHSERVER_REPO_URI}
+              username: ${GIT_AUTHSERVER_REPO_USERNAME}
+              password: ${GIT_AUTHSERVER_REPO_PASSWORD}
+              search-paths:
+              - /*
+            test-springbootms: 
+              clone-on-start: true
+              uri: https://github.com/cesargomezvela/config-repo-test-springbootms.git
+              username: ${GIT_DEFAULT_REPO_USERNAME}
+              password: ${GIT_DEFAULT_REPO_PASSWORD}
+              search-paths:
+              - /*

@@ -4,6 +4,31 @@ spec:
     spec:
       containers:
       - env:
+        env:
+          - name: PROFILE_ACTIVE
+            valueFrom:
+              configMapKeyRef: 
+                key: profile
+                name: profile-active-configmap
+          - name: CONFIG_SERVER_URI
+            value: http://configserver
+          - name: CONFIG_SERVER_USER
+            valueFrom:
+              secretKeyRef: 
+                key: username
+                name: config-server-secrets
+          - name: CONFIG_SERVER_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: config-server-secrets
+          - name: CONFIG_SERVER_LABEL
+            value: master
+          - name: NEW_RELIC_LICENSE
+            valueFrom:
+              secretKeyRef: 
+                key: license
+                name: newrelic-license-key-secrets
         livenessProbe:
           httpGet:
               path: /authserver/health

@@ -38,18 +38,33 @@ spec:
           - name: GIT_DEFAULT_REPO_URI
             valueFrom:
               secretKeyRef: 
-                key: uri
-                name: git-default-repo-secrets
+                key: default-uri
+                name: git-configserver-repo-secrets
           - name: GIT_DEFAULT_REPO_USERNAME
             valueFrom:
               secretKeyRef: 
-                key: uri
-                name: git-default-repo-secrets
+                key: defaultrepo-username
+                name: git-configserver-repo-secrets
           - name: GIT_DEFAULT_REPO_PASSWORD
             valueFrom:
               secretKeyRef: 
-                key: password
-                name: git-default-repo-secrets
+                key: defaultrepo-password
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_URI
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-uri
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-username
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-password
+                name: git-configserver-repo-secrets
           - name: NEW_RELIC_LICENSE
             valueFrom:
               secretKeyRef: 
