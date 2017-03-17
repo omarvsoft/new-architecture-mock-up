@@ -604,7 +604,7 @@ For kubernetes you must provide the environment varibles in `src/main/fabric8/au
       name: profile-active-configmap
 ```
 
-As you can notice the variable will be taken from the configmap `profile-active-configmap`, thus that the secret must be configured before
+As you can notice the variable will be taken from the configmap `profile-active-configmap`, thus that the configmap must be configured before
 
 
 ### Security
@@ -646,7 +646,7 @@ For kubernetes you must provide the environment varibles in `src/main/fabric8/au
 
 As you can notice the variables will be taken from the secret `config-server-secrets`, thus that the secret must be configured before
 
-The spring.cloud.config.password and spring.cloud.config.username values override anything that is provided in the URI.
+The `spring.cloud.config.password` and `spring.cloud.config.username` values override anything that is provided in the URI.
 
 ### Health Indicator
 The Config Client supplies a Spring Boot Health Indicator that attempts to load configuration from Config Server. The health indicator can be disabled by setting health.config.enabled=false. The response is also cached for performance reasons. The default cache time to live is 5 minutes. To change that value set the health.config.time-to-live property (in milliseconds).
@@ -737,7 +737,7 @@ We can also refresh specific properties by setting the property name as a parame
 
 Many source code repository providers (like Github, Gitlab, Gogs or Bitbucket for instance) will notify you of changes in a repository through a webhook. 
 
-You can configure the webhook via the provider’s user interface as a URL and when you push in the repository the webhook is activated and it can make a POST request to `/bus/refresh` endpoint in order to refresh the configuration as explained on Spring bus section
+You can configure the webhook via the provider’s user interface as a URL and when you push in the repository the webhook is activated and it can make a POST request to `/bus/refresh` endpoint in order to refresh the configuration as explained on Spring Cloud Bus section
 
 ![WebhookConf](src/main/doc/images/WebhookConf.png)
 
