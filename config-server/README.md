@@ -454,8 +454,52 @@ If you need to configure your IDE to report in New Relic, you need to:
 
 
 
-## ConfigServer Client
+## Configure a new repository 
 
+In order to configure a new configuration repository for a new microservice you should.
+
+* Modify the `bootstrap.yml` and set under `spring.cloud.config.server.git.repos` the new configuration
+```YAML
+spring: 
+  cloud: 
+    config: 
+      server: 
+        git: 
+          repos: 
+            authorization-server:
+              clone-on-start: true
+              uri: ${GIT_AUTHSERVER_REPO_URI}
+              username: ${GIT_AUTHSERVER_REPO_USERNAME}
+              password: ${GIT_AUTHSERVER_REPO_PASSWORD}
+              search-paths:
+              - /*
+```
+
+* As you can notice the values will be set through environment variables, You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/configserver-deployment.yml`)
+  ```YAML
+  - name: GIT_AUTHSERVER_REPO_URI
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-uri
+        name: git-configserver-repo-secrets
+  - name: GIT_AUTHSERVER_REPO_USERNAME
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-username
+        name: git-configserver-repo-secrets
+  - name: GIT_AUTHSERVER_REPO_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-password
+        name: git-configserver-repo-secrets
+  ```
+
+>  The secret `git-configserver-repo-secrets` and its keys must exist in kubernetes
+
+# ConfigServer Client
+___
+
+> **Prerequisites:** The configserver is configured in such a way that each microservice has its own configuration repository, so before you can configure a client its repository must have been configured first in the configserver
 
 A Spring Boot application can take immediate advantage of the Spring Config Server (or other external property sources provided by the application developer), and it will also pick up some additional useful features related to Environment change events.
 
@@ -608,7 +652,7 @@ The spring.cloud.config.password and spring.cloud.config.username values overrid
 The Config Client supplies a Spring Boot Health Indicator that attempts to load configuration from Config Server. The health indicator can be disabled by setting health.config.enabled=false. The response is also cached for performance reasons. The default cache time to live is 5 minutes. To change that value set the health.config.time-to-live property (in milliseconds).
 
 ### Spring Cloud Bus for propagating configuration changes
-
+<br>
 
 ![CloudBusDiagram](src/main/doc/images/CloudBusDiagram.png)
 
@@ -630,7 +674,7 @@ Each instance subscribes for change events, and refreshes its local configuratio
 
 * The microservice also needs connectivity to RabbitMQ, you must configure this in its configuration file (located in the repository) as environment variables because kubernetes will provide these values after.
 
-  ```XML
+  ```YAML
   spring:
      rabbitmq:
       host: ${CONFIG_RABBITMQ_HOST}
@@ -639,7 +683,7 @@ Each instance subscribes for change events, and refreshes its local configuratio
       password: ${CONFIG_RABBITMQ_PASSWORD}
   ```
 
-  You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/XXXXX-deployment.yml`)
+  You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/authorization-server-deployment.yml` in this case)
 
   ```YAML
   - name: CONFIG_RABBITMQ_HOST
