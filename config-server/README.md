@@ -459,21 +459,22 @@ If you need to configure your IDE to report in New Relic, you need to:
 In order to configure a new configuration repository for a new microservice you should.
 
 * Modify the `bootstrap.yml` and set under `spring.cloud.config.server.git.repos` the new configuration
-```YAML
-spring: 
-  cloud: 
-    config: 
-      server: 
-        git: 
-          repos: 
-            authorization-server:
-              clone-on-start: true
-              uri: ${GIT_AUTHSERVER_REPO_URI}
-              username: ${GIT_AUTHSERVER_REPO_USERNAME}
-              password: ${GIT_AUTHSERVER_REPO_PASSWORD}
-              search-paths:
-              - /*
-```
+  ```YAML
+  spring: 
+    cloud: 
+      config: 
+        server: 
+          git: 
+            repos: 
+              authorization-server:
+                clone-on-start: true
+                uri: ${GIT_AUTHSERVER_REPO_URI}
+                username: ${GIT_AUTHSERVER_REPO_USERNAME}
+                password: ${GIT_AUTHSERVER_REPO_PASSWORD}
+                search-paths:
+                - /*
+  ```
+  > **NOTICE** that the repository name (`authorization-server` in this case) must match with the `spring.application.name` on the client side
 
 * As you can notice the values will be set through environment variables, You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/configserver-deployment.yml`)
   ```YAML
@@ -494,10 +495,9 @@ spring:
         name: git-configserver-repo-secrets
   ```
 
->  The secret `git-configserver-repo-secrets` and its keys must exist in kubernetes
+  >  The secret `git-configserver-repo-secrets` and its keys must exist in kubernetes
 
 # ConfigServer Client
-___
 
 > **Prerequisites:** The configserver is configured in such a way that each microservice has its own configuration repository, so before you can configure a client its repository must have been configured first in the configserver
 
@@ -732,5 +732,18 @@ curl –d {} localhost:9090/bus/refresh
 ```
 
 We can also refresh specific properties by setting the property name as a parameter.
+
+## Auto refresh with WebHooks 
+
+Many source code repository providers (like Github, Gitlab, Gogs or Bitbucket for instance) will notify you of changes in a repository through a webhook. 
+
+You can configure the webhook via the provider’s user interface as a URL and when you push in the repository the webhook is activated and it can make a POST request to `/bus/refresh` endpoint in order to refresh the configuration as explained on Spring bus section
+
+![WebhookConf](src/main/doc/images/WebhookConf.png)
+
+> During the development spring-cloud-config-monitor was examined as an alternative to provide the same solution but it did not pass the stress test.
+ 
+
+
 
 
