@@ -456,7 +456,7 @@ If you need to configure your IDE to report in New Relic, you need to:
 
 ## Configure a new repository 
 
-In order to configure a new configuration repository for a new microservice you should.
+In order to configure a new repository for a new microservice within the configuration server you should.
 
 * Modify the `bootstrap.yml` and set under `spring.cloud.config.server.git.repos` the new configuration
   ```YAML
