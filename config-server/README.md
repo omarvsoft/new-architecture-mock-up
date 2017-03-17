@@ -441,3 +441,252 @@ If you need to configure your IDE to report in New Relic, you need to:
 * Finally, set the `-javaagent` and the `newrelic.environment` parameters in the IDE.
 
 ![NewRelic_IDEEnv](src/main/doc/images/NewRelic_IDEEnv.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ConfigServer Client
+
+
+A Spring Boot application can take immediate advantage of the Spring Config Server (or other external property sources provided by the application developer), and it will also pick up some additional useful features related to Environment change events.
+
+### POM dependency
+
+Set the following dependency to your pom.
+
+```XML
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+
+>Also may be necessary set the spring cloud dependencyManagement but if you inherited from new-architecture parent pom it is not necessary
+
+### Configure Bootstrap
+
+All client apps that want to consume the Config Server need a `bootstrap.yml` in `src/main/resources` directory (or an environment variable) with the server address in spring.cloud.config.uri (defaults to "http://localhost:8888").
+
+*src/main/resources/bootstrap.yml*
+```YAML
+spring: 
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+```
+
+`${CONFIG_SERVER_URI}` indicate that this value will be taken from the environment variable `CONFIG_SERVER_URI` in your IDE you can provide this by adding a new environment variable 
+
+![AuthoEnvars](src/main/doc/images/AuthoEnvars.png)
+
+For kubernetes you have to configure the environment variable  in `src/main/fabric8/authorization-server-deployment.yml`
+
+```YAML
+- name: CONFIG_SERVER_URI
+  value: http://configserver
+```
+
+Where the `http://configserver` is the service name of the configserver. (you must ask for the correct name)
+
+
+### Config Client Fail Fast
+In some cases, it may be desirable to fail startup of a service if it cannot connect to the Config Server. If this is the desired behavior, set the bootstrap configuration property `spring.cloud.config.failFast=true` and the client will halt with an Exception.
+
+This is the case for most microservices.
+
+*src/main/resources/bootstrap.yml*
+```YAML
+spring: 
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+      fail-fast: true
+```
+
+
+### Config Client Retry
+
+If you expect that the config server may occasionally be unavailable when your app starts, you can ask it to keep trying after a failure. First you need to set spring.cloud.config.failFast=true, and then you need to add spring-retry and spring-boot-starter-aop to your classpath. The default behaviour is to retry 6 times with an initial backoff interval of 1000ms and an exponential multiplier of 1.1 for subsequent backoffs. You can configure these properties (and others) using spring.cloud.config.retry.* configuration properties.
+
+>TIP: 
+To take full control of the retry add a @Bean of type RetryOperationsInterceptor with id "configServerRetryInterceptor". Spring Retry has a RetryInterceptorBuilder that makes it easy to create one.
+
+
+
+### Locating Remote Configuration Resources
+
+The Config Service serves property sources from `/{name}/{profile}/{label}`, where the default bindings in the client app are
+
+* "name" = ${spring.application.name}
+  * e.g. If your  `spring.application.name=authorization-server`, then your configuration file must be  named `authorization-server.yml` or `authorization-server.properties`. 
+
+* "profile" = ${spring.profiles.active} (actually Environment.getActiveProfiles())
+  * If your configuration files are based on the environment, you should include the profile in the file name e.g. `authorization-server-development.yml`, `authorization-server-QA.yml`, `authorization-server-production.yml`, etc. If you do not provide a profile, then the same file will be served for all profiles
+
+* "label" = ${spring.cloud.config.label} ("master" by default if this property is not present) 
+
+All of them (name, profile and label) can be overridden by setting spring.cloud.config.* (where * is "name", "profile" or "label"). The "label" is useful for rolling back to previous versions of configuration; with the default Config Server implementation it can be a git label, branch name or commit id. Label can also be provided as a comma-separated list, in which case the items in the list are tried on-by-one until one succeeds. This can be useful when working on a feature branch, for instance, when you might want to align the config label with your branch, but make it optional (e.g. spring.cloud.config.label=myfeature,develop).
+
+```YAML
+spring: 
+  profiles:
+    active: ${PROFILE_ACTIVE}
+  application:
+    name: authorization-server
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+      profile: ${PROFILE_ACTIVE}
+      label: ${CONFIG_SERVER_LABEL:master}
+      fail-fast: true
+```
+
+For kubernetes you must provide the environment varibles in `src/main/fabric8/authorization-server-deployment.yml`
+
+```YAML
+- name: PROFILE_ACTIVE
+  valueFrom:
+    configMapKeyRef: 
+      key: profile
+      name: profile-active-configmap
+```
+
+As you can notice the variable will be taken from the configmap `profile-active-configmap`, thus that the secret must be configured before
+
+
+### Security
+The configuration server uses HTTP Basic security then clients just need to add the environment variables for password and username You can do that via the config server URI, or via separate username and password properties, e.g.
+
+bootstrap.yml
+```YAML
+spring:
+  cloud:
+    config:
+     uri: http://${CONFIG_SERVER_USER}:${CONFIG_SERVER_PASSWORD}@${CONFIG_SERVER_URI}
+```
+
+OR
+
+```YAML
+spring: 
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}
+```
+
+For kubernetes you must provide the environment varibles in `src/main/fabric8/authorization-server-deployment.yml`
+
+```YAML
+- name: CONFIG_SERVER_USER
+  valueFrom:
+    secretKeyRef: 
+      key: username
+      name: config-server-secrets
+- name: CONFIG_SERVER_PASSWORD
+  valueFrom:
+    secretKeyRef: 
+      key: password
+      name: config-server-secrets
+```
+
+As you can notice the variables will be taken from the secret `config-server-secrets`, thus that the secret must be configured before
+
+The spring.cloud.config.password and spring.cloud.config.username values override anything that is provided in the URI.
+
+### Health Indicator
+The Config Client supplies a Spring Boot Health Indicator that attempts to load configuration from Config Server. The health indicator can be disabled by setting health.config.enabled=false. The response is also cached for performance reasons. The default cache time to live is 5 minutes. To change that value set the health.config.time-to-live property (in milliseconds).
+
+### Spring Cloud Bus for propagating configuration changes
+
+
+![CloudBusDiagram](src/main/doc/images/CloudBusDiagram.png)
+
+
+The Spring Cloud Bus provides a mechanism to refresh configurations across multiple instances without knowing how many instances there are, or their locations. 
+
+This is particularly handy when there are many service instances of a microservice running or when there are many microservices of different types running. This is done by connecting all service instances through a single message broker. 
+
+Each instance subscribes for change events, and refreshes its local configuration when required. This refresh is triggered by making a call to any one instance by hitting the `/bus/refresh` endpoint, which then propagates the changes through the cloud bus and the common message broker. 
+
+* You have to add a new Cloud Bus dependency: 
+
+  ```XML
+  <dependency>
+  	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+  </dependency>
+  ```
+
+* The microservice also needs connectivity to RabbitMQ, you must configure this in its configuration file (located in the repository) as environment variables because kubernetes will provide these values after.
+
+  ```XML
+  spring:
+     rabbitmq:
+      host: ${CONFIG_RABBITMQ_HOST}
+      port: ${CONFIG_RABBITMQ_PORT}
+      username: ${CONFIG_RABBITMQ_USER}
+      password: ${CONFIG_RABBITMQ_PASSWORD}
+  ```
+
+  You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/XXXXX-deployment.yml`)
+
+  ```YAML
+  - name: CONFIG_RABBITMQ_HOST
+    valueFrom:
+      secretKeyRef: 
+        key: hotst
+        name: rabbitmq-secrets
+  - name: CONFIG_RABBITMQ_PORT
+    valueFrom:
+      secretKeyRef: 
+        key: port
+        name: rabbitmq-secrets
+  - name: CONFIG_RABBITMQ_USER
+    valueFrom:
+      secretKeyRef: 
+        key: user
+        name: rabbitmq-secrets
+  - name: CONFIG_RABBITMQ_PASSWORD
+    valueFrom:
+      secretKeyRef: 
+        key: password
+        name: rabbitmq-secrets
+  ```
+
+  The secret `rabbitmq-secrets` must be exist in kubernetes
+
+After that, when you change a value in the microservice configuration file (located in the repository) You can run the following command to `/bus/refresh` 
+
+Note that we are running a new bus endpoint against one of the instances, in this case: 
+
+```shell
+curl –d {} localhost:9090/bus/refresh
+```
+
+
+ Immediately, we will see the following message in each instance: 
+ 
+ ```shell
+ Received remote refresh request. Keys refreshed [property.prop]
+ ```
+ 
+ The bus endpoint sends a message to the message broker internally, which is eventually consumed by all instances, reloading their property files. Changes can also be applied to a specific application by specifying the application name like so:
+
+```shell
+/bus/refresh?destination=search-service:**
+```
+
+We can also refresh specific properties by setting the property name as a parameter.
+
+
