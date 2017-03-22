@@ -30,8 +30,7 @@
 			<pattern>${AMQP_LOG_PATTERN}</pattern>
 		</layout>
 		
-		<!-- RabbitMQ connection -->	
-<!-- 		<host>172.29.1.81</host> -->
+		<!-- RabbitMQ connection -->
 		<host>${LOGBACK_AMQP_HOST}</host>
 		<port>${LOGBACK_AMQP_PORT}</port>
 		<username>${LOGBACK_AMQP_USER}</username>
@@ -43,8 +42,8 @@
 		<deliveryMode>${LOGBACK_AMQP_DELIVERY_MODE}</deliveryMode>
 		<senderPoolSize>${LOGBACK_AMQP_SENDER_POOL_SIZE}</senderPoolSize>
 		<maxSenderRetries>${LOGBACK_AMQP_MAX_SENDER_RETRIES}</maxSenderRetries>
-		<routingKeyPattern>${LOGBACK_ROUTING_KEY_PATTERN}</routingKeyPattern>
-		<declareExchange>${LOGBACK_DECLARE_EXCHANGE}</declareExchange>
+		<routingKeyPattern>${LOGBACK_AMQP_ROUTING_KEY_PATTERN}</routingKeyPattern>
+		<declareExchange>${LOGBACK_AMQP_DECLARE_EXCHANGE}</declareExchange>
 		
 		<applicationId>ConfigServer</applicationId>
 		<generateId>true</generateId>

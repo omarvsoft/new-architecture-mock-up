@@ -120,12 +120,12 @@ spec:
               configMapKeyRef: 
                 key: maxsender-retries
                 name: logback-amqp-configmaps
-          - name: LOGBACK_ROUTING_KEY_PATTERN
+          - name: LOGBACK_AMQP_ROUTING_KEY_PATTERN
             valueFrom:
               configMapKeyRef: 
                 key: routingkey-pattern
                 name: logback-amqp-configmaps
-          - name: LOGBACK_DECLARE_EXCHANGE
+          - name: LOGBACK_AMQP_DECLARE_EXCHANGE
             valueFrom:
               configMapKeyRef: 
                 key: declare-exchange
