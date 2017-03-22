@@ -1,0 +1,25 @@
+spring: 
+  profiles: junit
+  application:
+    name: configserver
+  cloud: 
+    config: 
+      fail-fast: true
+      server: 
+        git: 
+          clone-on-start: true
+          uri: ${TEST_REPO_URI}
+          search-paths:
+          - /*
+server:
+  port: 8888
+encrypt:
+  key-store: 
+    location: ${KEY_STORE_LOCATION}
+    password: ${KEY_STORE_PASSWORD}
+    alias: ${KEY_STORE_ALIAS}
+    secret: ${KEY_STORE_SECRET}
+management:
+  health:
+    rabbit:
+      enabled: false
