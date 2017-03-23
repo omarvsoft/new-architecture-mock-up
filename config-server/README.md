@@ -787,7 +787,7 @@ Set the following dependency to your pom.
 
 ### Configure Bootstrap
 
-All client apps that want to consume the Config Server need a `bootstrap.yml` in `src/main/resources` directory (or an environment variable) with the server address in spring.cloud.config.uri (defaults to "http://localhost:8888").
+All client apps that want to consume the Config Server need a `bootstrap.yml` in `src/main/resources` directory (or an environment variable) with the server address in `spring.cloud.config.uri` (defaults to "http://localhost:8888").
 
 *src/main/resources/bootstrap.yml*
 ```YAML
@@ -814,7 +814,7 @@ Where the `http://configserver` is the service name of the configserver. (you mu
 ### Config Client Fail Fast
 In some cases, it may be desirable to fail startup of a service if it cannot connect to the Config Server. If this is the desired behavior, set the bootstrap configuration property `spring.cloud.config.failFast=true` and the client will halt with an Exception.
 
-This is the case for most microservices.
+This is the case for most of microservices.
 
 *src/main/resources/bootstrap.yml*
 ```YAML
@@ -1001,6 +1001,23 @@ curl –d {} localhost:9090/bus/refresh
 ```
 
 We can also refresh specific properties by setting the property name as a parameter.
+
+-> IMPORTANT: In order to refresh the values the class must be marked as @RefreshScope and its attributes with @Value
+
+i.e.
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.RestController;
+
+@RefreshScope
+@RestController
+public class TestController {
+
+	@Value("${test.custom.message}")
+	private String message;
+}
+```
 
 ## Auto refresh with WebHooks 
 
