@@ -319,7 +319,10 @@ data:
 ```
 
 
-If you want to know more about secrets, ConfigMappings and how to expose them as environment variables, You can visit:
+If you want to know more about Secrets, ConfigMappings and how to expose them as environment variables, You can visit:
+
+* https://kubernetes.io/docs/user-guide/secrets/#using-secrets-as-environment-variables
+* https://kubernetes.io/docs/user-guide/configmap/
 
 
 Independently if you resources are properties or YAML files the HTTP service has resources in the form:
