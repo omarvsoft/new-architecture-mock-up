@@ -47,7 +47,7 @@ public class ApplicationTest {
 	public static void setUp() throws IOException{
 		logger.info("Set UP. It is setting the necessary environment variables to execute the test.");
 		
-		Path testRepo 	  = Paths.get("./src/test/config-repo-test").toRealPath();
+		Path testRepo 	  = Paths.get("../").toRealPath();
 		Path keyStorePass = Paths.get("./src/test/keystore/configServerTest.jks").toRealPath();
 
 		System.setProperty("spring.profiles.active", 		"junit");

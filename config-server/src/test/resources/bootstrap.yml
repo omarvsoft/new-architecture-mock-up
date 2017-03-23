@@ -10,7 +10,7 @@ spring:
           clone-on-start: true
           uri: ${TEST_REPO_URI}
           search-paths:
-          - /*
+          - /config-server/src/test/config-repo-test
 server:
   port: 8888
 encrypt:

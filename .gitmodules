@@ -1,6 +1,3 @@
-[submodule "config-repo-test"]
-	path = config-repo-test
-	url = /Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/test/config-repo-test
 [submodule "config-server/src/test/config-repo-test"]
 	path = config-server/src/test/config-repo-test
-	url = /Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/test/config-repo-test
+	url = https://github.com/cesargomezvela/config-repo-test.git
