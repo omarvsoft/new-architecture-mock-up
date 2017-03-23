@@ -328,6 +328,54 @@ If you want to know more about Secrets, ConfigMappings and how to expose them as
 * https://kubernetes.io/docs/user-guide/secrets/#using-secrets-as-environment-variables
 * https://kubernetes.io/docs/user-guide/configmap/
 
+
+## Organization
+
+The configserver is configured in such way that each microservice needs its own repository to store its configuration files. Thus we can update each repository separately  and refresh the pods selectively
+
+## Configure a new repository 
+
+In order to configure a new repository for a new microservice within the configuration server you should.
+
+* Modify the `bootstrap.yml` and set under `spring.cloud.config.server.git.repos` the new configuration
+  ```YAML
+  spring: 
+    cloud: 
+      config: 
+        server: 
+          git: 
+            repos: 
+              authorization-server:
+                clone-on-start: true
+                uri: ${GIT_AUTHSERVER_REPO_URI}
+                username: ${GIT_AUTHSERVER_REPO_USERNAME}
+                password: ${GIT_AUTHSERVER_REPO_PASSWORD}
+                search-paths:
+                - /*
+  ```
+  > **NOTICE** that the repository name (`authorization-server` in this case) must match with the `spring.application.name` on the client side
+
+* As you can notice the values will be set through environment variables, You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/configserver-deployment.yml`)
+  ```YAML
+  - name: GIT_AUTHSERVER_REPO_URI
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-uri
+        name: git-configserver-repo-secrets
+  - name: GIT_AUTHSERVER_REPO_USERNAME
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-username
+        name: git-configserver-repo-secrets
+  - name: GIT_AUTHSERVER_REPO_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: authorization-server-password
+        name: git-configserver-repo-secrets
+  ```
+
+  >  The secret `git-configserver-repo-secrets` and its keys must exist in kubernetes
+
 ## Cryptography 
 
 > **Prerequisites:** to use the encryption and decryption features a Java certificate has to be created and installed in kubernetes. Additionally, the kubernetes SECRETS for location, password, alias and secret have to be created too.
@@ -698,60 +746,6 @@ If you need to configure your IDE to report in New Relic, you need to:
 
 ![NewRelic_IDEEnv](src/main/doc/images/NewRelic_IDEEnv.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-## Configure a new repository 
-
-In order to configure a new repository for a new microservice within the configuration server you should.
-
-* Modify the `bootstrap.yml` and set under `spring.cloud.config.server.git.repos` the new configuration
-  ```YAML
-  spring: 
-    cloud: 
-      config: 
-        server: 
-          git: 
-            repos: 
-              authorization-server:
-                clone-on-start: true
-                uri: ${GIT_AUTHSERVER_REPO_URI}
-                username: ${GIT_AUTHSERVER_REPO_USERNAME}
-                password: ${GIT_AUTHSERVER_REPO_PASSWORD}
-                search-paths:
-                - /*
-  ```
-  > **NOTICE** that the repository name (`authorization-server` in this case) must match with the `spring.application.name` on the client side
-
-* As you can notice the values will be set through environment variables, You must relate these variables  with the kubernetes deployment descriptor (`src/main/fabric8/configserver-deployment.yml`)
-  ```YAML
-  - name: GIT_AUTHSERVER_REPO_URI
-    valueFrom:
-      secretKeyRef:
-        key: authorization-server-uri
-        name: git-configserver-repo-secrets
-  - name: GIT_AUTHSERVER_REPO_USERNAME
-    valueFrom:
-      secretKeyRef:
-        key: authorization-server-username
-        name: git-configserver-repo-secrets
-  - name: GIT_AUTHSERVER_REPO_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        key: authorization-server-password
-        name: git-configserver-repo-secrets
-  ```
-
-  >  The secret `git-configserver-repo-secrets` and its keys must exist in kubernetes
 
 # ConfigServer Client
 
