@@ -759,9 +759,8 @@ In order to configure a new repository for a new microservice within the configu
 
 A Spring Boot application can take immediate advantage of the Spring Config Server (or other external property sources provided by the application developer), and it will also pick up some additional useful features related to Environment change events.
 
-ConfigServer Client
 
-Independently if you resources are properties or YAML files, the configserver expose the resources in the form:
+Independently if your resources are properties or YAML files, the configserver expose the resources in the form:
 ```
 /{application}/{profile}[/{label}]
 /{application}-{profile}.yml
