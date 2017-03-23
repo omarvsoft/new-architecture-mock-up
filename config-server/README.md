@@ -11,35 +11,66 @@ The server is a Spring Boot application so you can run it from your Console or I
 
 It is important to notice that the configuration server needs some environment variables (can be more or less in the future. Each repository configured needs its own environment variables). 
 
+* Current environment
+  * PROFILE_ACTIVE (it indicates where is the application running. i.e. development, QA, certification, production, etc.)
 * Basic autentication
-  * SECRET_CONFIG_SERVER_USER
-  * SECRET_CONFIG_SERVER_PASSWORD
+  * CONFIG_SERVER_USER
+  * CONFIG_SERVER_PASSWORD
 * Encrypt key-store (It permits the encryption and decryption of sensitive information in the Git repository.)
-  * SECRET_KEY_STORE_LOCATION (the path where the Java Key Store is located) 
-  * SECRET_KEY_STORE_PASSWORD (the password of the key store)
-  * SECRET_KEY_STORE_ALIAS (the alias of the key store)
-  * SECRET_KEY_STORE_SECRET (the secret of the key store)
-* Server GIT
-  * SECRET_CONFIG_GIT_DEFAULT_REPO (It is required to have one default repository)
-  * SECRET_CONFIG_GIT_DEFAULT_USERNAME
-  * SECRET_CONFIG_GIT_DEFAULT_PASSWORD
+  * KEY_STORE_LOCATION (the path where the Java Key Store is located) 
+  * KEY_STORE_PASSWORD (the password of the key store)
+  * KEY_STORE_ALIAS (the alias of the key store)
+  * KEY_STORE_SECRET (the secret of the key store)
+* Default git server
+  * GIT_DEFAULT_REPO_URI (It is required to have one default repository)
+  * GIT_DEFAULT_REPO_USERNAME
+  * GIT_DEFAULT_REPO_PASSWORD
+* authorization-server repository (as an example, because each microservice needs its own repository)
+  * GIT_AUTHSERVER_REPO_URI
+  * GIT_AUTHSERVER_REPO_USERNAME
+  * GIT_AUTHSERVER_REPO_PASSWORD
+* logback environment variables to report to splunk (go to centralized log section for more information)
+  * LOGBACK_AMQP_DELIVERY_MODE
+  * LOGBACK_AMQP_EXCHANGE_NAME
+  * DLOGBACK_AMQP_EXCHANGE_TYPE
+  * DLOGBACK_AMQP_HOST
+  * DLOGBACK_AMQP_MAX_SENDER_RETRIES
+  * DLOGBACK_AMQP_PASSWORD
+  * DLOGBACK_AMQP_PORT
+  * DLOGBACK_AMQP_SENDER_POOL_SIZE
+  * DLOGBACK_AMQP_USER
+  * DLOGBACK_AMQP_DECLARE_EXCHANGE
+  * DLOGBACK_AMQP_ROUTING_KEY_PATTERN
+  
+> Additionally, if you want to configure NewRelic, You need to add more environment variables. Go to NewRelic section for more information 
 
 **Run in console:**
 ```SHELL
-java -jar -DCONFIG_SERVER_USER=myuser \
--DCONFIG_SERVER_PASSWORD=mypassword \
--DKEY_STORE_LOCATION=file:///keystore/configServer.jks \
--DKEY_STORE_PASSWORD=letmein \
--DKEY_STORE_ALIAS=configServKey \
--DKEY_STORE_SECRET=DevConfigServPass \
--DGIT_DEFAULT_REPO_URI=https://github.com/cesargomezvela/config-repo-default.git \
--DGIT_DEFAULT_REPO_USERNAME=muck-up \
+java -jar -DCONFIG_SERVER_PASSWORD=mypassword \
+-DCONFIG_SERVER_USER=myuser \
 -DGIT_DEFAULT_REPO_PASSWORD=co-qui2017 \
--Dnewrelic.config.file=/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/example_newrelic.yml \
--Dnewrelic.environment=development \
--Dnewrelic.logfile=/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/logs/newrelic_config_agent.log \
--javaagent:/Users/et41451/Development/code/sts-workspace_maqueta/new-architecture-mock-up/config-server/src/main/newrelic/newrelic-java-3.27.0/newrelic.jar \
-configserver-mock-up-0.1.0-SNAPSHOT.jar
+-DGIT_DEFAULT_REPO_URI=https://github.com/example/config-repo-default.git \
+-DGIT_DEFAULT_REPO_USERNAME=muck-up \
+-DGIT_AUTHSERVER_REPO_URI=https://github.com/example/config-repo-authorization-server.git \
+-DGIT_AUTHSERVER_REPO_USERNAME=muck-up \
+-DGIT_AUTHSERVER_REPO_PASSWORD=co-qui2017 \
+-DKEY_STORE_ALIAS=configServKey \
+-DKEY_STORE_LOCATION=file:///Users/et41451/Documents/MicroServices/Development/keystore/configServer.jks \
+-DKEY_STORE_PASSWORD=letmein \
+-DKEY_STORE_SECRET=DevConfigServPass \
+-DLOGBACK_AMQP_DELIVERY_MODE=NON_PERSISTENT \
+-DLOGBACK_AMQP_EXCHANGE_NAME=cibp-log-02 \
+-DLOGBACK_AMQP_EXCHANGE_TYPE=topic \
+-DLOGBACK_AMQP_HOST=localhost \
+-DLOGBACK_AMQP_MAX_SENDER_RETRIES=3 \
+-DLOGBACK_AMQP_PASSWORD=guest \
+-DLOGBACK_AMQP_PORT=5672 \
+-DLOGBACK_AMQP_SENDER_POOL_SIZE=3 \
+-DLOGBACK_AMQP_USER=guest \
+-DLOGBACK_AMQP_DECLARE_EXCHANGE=true \
+-DLOGBACK_AMQP_ROUTING_KEY_PATTERN=test \
+-DPROFILE_ACTIVE=development \
+configserver-0.1.0-SNAPSHOT.jar
 ```
 
 **IDE configuration**
