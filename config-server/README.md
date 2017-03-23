@@ -428,7 +428,7 @@ Take the encrypted value and add the `{cipher}` prefix before you put it in the 
 
 The Config Server use an asymmetric RSA key pair.
 
-To configure an asymmetric key you can create a keystore (e.g. as created by the keytool utility that comes with the JDK). The keystore properties are configured in the `application.yml` under encrypt.keyStore.* with the values:
+To configure an asymmetric key you can create a keystore (e.g. as created by the keytool utility that comes with the JDK). The keystore properties are configured in the `bootstrap.yml` under encrypt.keyStore.* with the values:
 
 * `location` (a Resource location),
 * `password` (to unlock the keystore) and
@@ -452,7 +452,7 @@ The `configServer.jks` needs to be exposed as a SECRET in kubernetes through the
 kubectl create secret generic config-server-keystore --from-file=/Users/et41451/Documents/keystore/configServer.jks
 ```
 
-The `application.yml` in the configserver
+The `bootstrap.yml` in the configserver
 ```YAML
 encrypt:
   key-store: 
@@ -462,7 +462,7 @@ encrypt:
     secret: ${KEY_STORE_SECRET}
 ```
 
-As you can notice the values will be taken from environment variables in order to can run the application in any environment. Actually, these variables will be set as SECRETS inside kubernetes.
+As you can notice the values will be taken from environment variables in order to run the application in any environment. Actually, these variables will be set as SECRETS inside kubernetes.
 
 
 ### Kubernetes configuration
@@ -745,6 +745,112 @@ If you need to configure your IDE to report in New Relic, you need to:
 * Finally, set the `-javaagent` and the `newrelic.environment` parameters in the IDE.
 
 ![NewRelic_IDEEnv](src/main/doc/images/NewRelic_IDEEnv.png)
+
+
+## Centralized logging
+
+Centralized logging is very important in microservice ecosystem as we are breaking a system into a number of smaller services, which could result in decentralized logging.  If they store logs in a local storage, it would be extremely difficult to correlate logs between services.
+
+We have chosen Splunk as centralized logging framework and rabbitmq to transport the logs.
+
+The following is an extract of `src/main/resources/logback.xml`
+```XML
+	<appender name="AMQP"
+		class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+		<layout>
+			<pattern>${AMQP_LOG_PATTERN}</pattern>
+		</layout>
+		
+		<!-- RabbitMQ connection -->
+		<host>${LOGBACK_AMQP_HOST}</host>
+		<port>${LOGBACK_AMQP_PORT}</port>
+		<username>${LOGBACK_AMQP_USER}</username>
+		<password>${LOGBACK_AMQP_PASSWORD}</password>
+		
+		<!-- RabbitMQ exchange configuration -->
+		<exchangeName>${LOGBACK_AMQP_EXCHANGE_NAME}</exchangeName>
+		<exchangeType>${LOGBACK_AMQP_EXCHANGE_TYPE}</exchangeType>
+		<deliveryMode>${LOGBACK_AMQP_DELIVERY_MODE}</deliveryMode>
+		<senderPoolSize>${LOGBACK_AMQP_SENDER_POOL_SIZE}</senderPoolSize>
+		<maxSenderRetries>${LOGBACK_AMQP_MAX_SENDER_RETRIES}</maxSenderRetries>
+		<routingKeyPattern>${LOGBACK_AMQP_ROUTING_KEY_PATTERN}</routingKeyPattern>
+		<declareExchange>${LOGBACK_AMQP_DECLARE_EXCHANGE}</declareExchange>
+		
+		<applicationId>ConfigServer</applicationId>
+		<generateId>true</generateId>
+		<charset>UTF-8</charset>
+	</appender>
+	​
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<!-- uncomment this to log to an AMQP -->
+		 <appender-ref ref="AMQP"/>
+	</root>
+```
+
+As you can notice the connection to rabbitmq and exchange configuration will be taken from environment variables in order to run the application in any environment
+
+### kubernetes configuration
+
+In order to deploy in kubernetes you must include the next configuration
+`src/main/fabric8/configserver-deployment.yml`
+```YAML
+  - name: LOGBACK_AMQP_HOST
+    valueFrom:
+      secretKeyRef: 
+        key: rabbit-host
+        name: logback-amqp-secrets
+  - name: LOGBACK_AMQP_PORT
+    valueFrom:
+      secretKeyRef: 
+        key: rabbit-port
+        name: logback-amqp-secrets
+  - name: LOGBACK_AMQP_USER
+    valueFrom:
+      secretKeyRef: 
+        key: rabbit-user
+        name: logback-amqp-secrets
+  - name: LOGBACK_AMQP_PASSWORD
+    valueFrom:
+      secretKeyRef: 
+        key: rabbit-password
+        name: logback-amqp-secrets
+  - name: LOGBACK_AMQP_EXCHANGE_NAME
+    valueFrom:
+      configMapKeyRef: 
+        key: exchange-name
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_EXCHANGE_TYPE
+    valueFrom:
+      configMapKeyRef: 
+        key: exchange-type
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_DELIVERY_MODE
+    valueFrom:
+      configMapKeyRef: 
+        key: delivery-mode
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_SENDER_POOL_SIZE
+    valueFrom:
+      configMapKeyRef: 
+        key: senderpool-size
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_MAX_SENDER_RETRIES
+    valueFrom:
+      configMapKeyRef: 
+        key: maxsender-retries
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_ROUTING_KEY_PATTERN
+    valueFrom:
+      configMapKeyRef: 
+        key: routingkey-pattern
+        name: logback-amqp-configmaps
+  - name: LOGBACK_AMQP_DECLARE_EXCHANGE
+    valueFrom:
+      configMapKeyRef: 
+        key: declare-exchange
+        name: logback-amqp-configmaps
+```
 
 
 # ConfigServer Client
