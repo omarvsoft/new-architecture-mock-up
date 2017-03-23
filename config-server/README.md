@@ -12,7 +12,7 @@ The server is a Spring Boot application so you can run it from your Console or I
 It is important to notice that the configuration server needs some environment variables (can be more or less in the future. Each repository configured needs its own environment variables). 
 
 * Current environment
-  * PROFILE_ACTIVE (it indicates where is the application running. i.e. development, QA, certification, production, etc.)
+  * PROFILE_ACTIVE (It indicates where is the application running. i.e. development, QA, certification, production, etc.)
 * Basic autentication
   * CONFIG_SERVER_USER
   * CONFIG_SERVER_PASSWORD
@@ -77,9 +77,142 @@ configserver-0.1.0-SNAPSHOT.jar
 
 ![IDEnvironmet](src/main/doc/images/IDEnvironmet.png)
 
-> The SECRET prefix is important because that reflect that the variable will be provided by the Kubernetes SECRETS mechanism. <br> Avoid replacing these values for text plain in the application.yml instead of that, you should set your environment as shown above
 
+**Kubernetes configuration**
 
+In order to deploy the microservice on kubernetes you should provide the above variables.
+
+`src/main/fabric8/configserver-deployment.yml`
+```YAML
+        env:
+          - name: CONFIG_SERVER_USER
+            valueFrom:
+              secretKeyRef: 
+                key: username
+                name: config-server-secrets
+          - name: CONFIG_SERVER_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: config-server-secrets
+          - name: KEY_STORE_LOCATION
+            valueFrom:
+              secretKeyRef: 
+                key: location
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: password
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_ALIAS
+            valueFrom:
+              secretKeyRef: 
+                key: alias
+                name: config-server-cryptography-secrets
+          - name: KEY_STORE_SECRET
+            valueFrom:
+              secretKeyRef: 
+                key: secret
+                name: config-server-cryptography-secrets
+          - name: GIT_DEFAULT_REPO_URI
+            valueFrom:
+              secretKeyRef: 
+                key: default-uri
+                name: git-configserver-repo-secrets
+          - name: GIT_DEFAULT_REPO_USERNAME
+            valueFrom:
+              secretKeyRef: 
+                key: defaultrepo-username
+                name: git-configserver-repo-secrets
+          - name: GIT_DEFAULT_REPO_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: defaultrepo-password
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_URI
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-uri
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-username
+                name: git-configserver-repo-secrets
+          - name: GIT_AUTHSERVER_REPO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: authorization-server-password
+                name: git-configserver-repo-secrets
+          - name: NEW_RELIC_LICENSE
+            valueFrom:
+              secretKeyRef: 
+                key: license
+                name: newrelic-license-key-secrets
+          - name: PROFILE_ACTIVE
+            valueFrom:
+              configMapKeyRef: 
+                key: profile
+                name: profile-active-configmap
+          - name: LOGBACK_AMQP_HOST
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-host
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_PORT
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-port
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_USER
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-user
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                key: rabbit-password
+                name: logback-amqp-secrets
+          - name: LOGBACK_AMQP_EXCHANGE_NAME
+            valueFrom:
+              configMapKeyRef: 
+                key: exchange-name
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_EXCHANGE_TYPE
+            valueFrom:
+              configMapKeyRef: 
+                key: exchange-type
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_DELIVERY_MODE
+            valueFrom:
+              configMapKeyRef: 
+                key: delivery-mode
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_SENDER_POOL_SIZE
+            valueFrom:
+              configMapKeyRef: 
+                key: senderpool-size
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_MAX_SENDER_RETRIES
+            valueFrom:
+              configMapKeyRef: 
+                key: maxsender-retries
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_ROUTING_KEY_PATTERN
+            valueFrom:
+              configMapKeyRef: 
+                key: routingkey-pattern
+                name: logback-amqp-configmaps
+          - name: LOGBACK_AMQP_DECLARE_EXCHANGE
+            valueFrom:
+              configMapKeyRef: 
+                key: declare-exchange
+                name: logback-amqp-configmaps
+```
+
+> As you can notice most of the environment variables will be taken from kubernetes SECRETS or ConfigMapping resources. These secrets and configmapings must be in kubernetes before you can deploy the microservice  
 
 Independently if you resources are properties or YAML files the HTTP service has resources in the form:
 ```
