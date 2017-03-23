@@ -70,7 +70,7 @@ java -jar -DCONFIG_SERVER_PASSWORD=mypassword \
 -DLOGBACK_AMQP_DECLARE_EXCHANGE=true \
 -DLOGBACK_AMQP_ROUTING_KEY_PATTERN=test \
 -DPROFILE_ACTIVE=development \
-configserver-0.1.0-SNAPSHOT.jar
+target/configserver-0.1.0-SNAPSHOT.jar
 ```
 
 **IDE configuration**
@@ -213,6 +213,114 @@ In order to deploy the microservice on kubernetes you should provide the above v
 ```
 
 > As you can notice most of the environment variables will be taken from kubernetes SECRETS or ConfigMapping resources. These secrets and configmapings must be in kubernetes before you can deploy the microservice  
+
+
+**SECRETS**
+
+The following kubernetes secrets have been created
+
+file: `config-server-cryptography-secrets.yml` secret name: `config-server-cryptography-secrets`
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: config-server-cryptography-secrets
+type: Opaque
+data: 
+  location: ZmlsZTovLy9rZXlzdG9yZS9jb25maWdTZXJ2ZXIuamtz
+  alias: Y29uZmlnU2VydktleQ==
+  password: bGV0bWVpbg==
+  secret: RGV2Q29uZmlnU2VydlBhc3M=
+```
+
+file: `config-server-secrets.yml` secret name: `config-server-secrets`
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: config-server-secrets
+type: Opaque
+data: 
+  uri: aHR0cDovL2NvbmZpZ3NlcnZlcg==
+  username: bXl1c2Vy
+  password: bXlwYXNzd29yZA==
+```
+
+file: `git-configserver-repo-secrets.yml` secret name: `git-configserver-repo-secrets`
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-configserver-repo-secrets
+type: Opaque
+data:
+  default-uri: aHR0cHM6Ly9naXRodWIuY29tL2Nlc2FyZ29tZXp2ZWxhL2NvbmZpZy1yZXBvLWRlZmF1bHQuZ2l0
+  defaultrepo-username: bXVjay11cA==
+  defaultrepo-password: Y28tcXVpMjAxNw==
+  authorization-server-uri: aHR0cHM6Ly9naXRodWIuY29tL2Nlc2FyZ29tZXp2ZWxhL2NvbmZpZy1yZXBvLWF1dGhvcml6YXRpb24tc2VydmVyLmdpdA==
+  authorization-server-username: bXVjay11cA==
+  authorization-server-password: Y28tcXVpMjAxNw==
+```
+
+file: `logback-amqp-secrets.yml` secret name: `logback-amqp-secrets`
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: logback-amqp-secrets
+type: Opaque
+data:
+  rabbit-host: MTcyLjI5LjEuODE=
+  rabbit-port: NTY3Mg==
+  rabbit-user: Z3Vlc3Q=
+  rabbit-password: Z3Vlc3Q=
+```
+
+file: `newrelic-license-key-secrets.yml` secret name: `newrelic-license-key-secrets`
+```YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: newrelic-license-key-secrets
+type: Opaque
+data:
+  license: JzFiMWY1YTk5MGJmODdiMmU0OGI3Y2U2MGMwNDA2YzYwYWJjNGI1MTQn
+```
+
+
+**ConfigMaps**
+
+The following kubernetes ConfigMaps have been created
+
+file: `logback-amqp-configmaps.yml` name: `logback-amqp-configmaps`
+```YAML
+kind: ConfigMap
+apiVersion: v1
+metadata: 
+  name: logback-amqp-configmaps
+data:
+  exchange-name: cibp-log-02
+  exchange-type: topic
+  delivery-mode: NON_PERSISTENT
+  senderpool-size: "3"
+  maxsender-retries: "3"
+  routingkey-pattern: test
+  declare-exchange: "true"
+```
+
+file: `profile-active-configmap.yml` secret name: `profile-active-configmap`
+```YAML
+kind: ConfigMap
+apiVersion: v1
+metadata: 
+  name: profile-active-configmap
+data:
+  profile: development
+```
+
+
+If you want to know more about secrets, ConfigMappings and how to expose them as environment variables, You can visit:
+
 
 Independently if you resources are properties or YAML files the HTTP service has resources in the form:
 ```
