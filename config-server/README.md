@@ -790,9 +790,9 @@ The following is an extract of `src/main/resources/logback.xml`
 
 As you can notice the connection to rabbitmq and exchange configuration will be taken from environment variables in order to run the application in any environment
 
-### kubernetes configuration
+#### kubernetes configuration
 
-In order to deploy in kubernetes you must include the next configuration
+On the side of kubernetes you must include the next configuration
 `src/main/fabric8/configserver-deployment.yml`
 ```YAML
   - name: LOGBACK_AMQP_HOST
