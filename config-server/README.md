@@ -324,29 +324,6 @@ If you want to know more about Secrets, ConfigMappings and how to expose them as
 * https://kubernetes.io/docs/user-guide/secrets/#using-secrets-as-environment-variables
 * https://kubernetes.io/docs/user-guide/configmap/
 
-
-Independently if you resources are properties or YAML files the HTTP service has resources in the form:
-```
-/{application}/{profile}[/{label}]
-/{application}-{profile}.yml
-/{label}/{application}-{profile}.yml
-/{application}-{profile}.properties
-/{label}/{application}-{profile}.properties
-```
-
-where the "application" is injected as the spring.config.name in the SpringApplication (i.e. what is normally "application" in a regular Spring Boot app), "profile" is an active profile (or comma-separated list of properties), and "label" is an optional git label (defaults to "master".)
-
-Spring Cloud Config Server pulls configuration for remote clients from a git repository (which must be provided):
-```YAML
-spring:
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/spring-cloud-samples/config-repo
-```
-
-
 ## Cryptography 
 
 > **Prerequisites:** to use the encryption and decryption features a Java certificate has to be created and installed in kubernetes. Additionally, the kubernetes SECRETS for location, password, alias and secret have to be created too.
@@ -777,6 +754,20 @@ In order to configure a new repository for a new microservice within the configu
 > **Prerequisites:** The configserver is configured in such a way that each microservice has its own configuration repository, so before you can configure a client its repository must have been configured first in the configserver
 
 A Spring Boot application can take immediate advantage of the Spring Config Server (or other external property sources provided by the application developer), and it will also pick up some additional useful features related to Environment change events.
+
+ConfigServer Client
+
+Independently if you resources are properties or YAML files, the configserver expose the resources in the form:
+```
+/{application}/{profile}[/{label}]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+```
+
+Where the "application" is injected as the `spring.config.name` in the application configuration, "profile" is an active profile (or comma-separated list of properties), and "label" is an optional git label (defaults to "master".)
+
 
 ### POM dependency
 
