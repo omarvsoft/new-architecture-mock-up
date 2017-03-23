@@ -287,6 +287,10 @@ data:
   license: JzFiMWY1YTk5MGJmODdiMmU0OGI3Y2U2MGMwNDA2YzYwYWJjNGI1MTQn
 ```
 
+You will need the next secret to use cryptography (Go to Cryptography section to know more) 
+```shell
+kubectl create secret generic config-server-keystore --from-file=/Users/et41451/Documents/keystore/configServer.jks
+```
 
 **ConfigMaps**
 
