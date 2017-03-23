@@ -852,6 +852,30 @@ On the side of kubernetes you must include the next configuration
         name: logback-amqp-configmaps
 ```
 
+## Spring cloud sleuth for logging tracing
+
+With the central loggin solution we can have all the logs in a central storage. However, it is still almost impossible to trace end-to-end transactions. In order to do end-to-end tracking, about transactions spanning microservices. We have incorporated sleuth which give us a correlation id per transaction.
+
+In order to enable sleuth the following configuration has been set.
+
+`pom.xml`
+```XML
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+```
+After added the dependency you will see in the console the trace ID and span ID
+
+```shell
+2017-03-23 19:45:35.460  INFO [configserver,b0d270c964e6aded,b0d270c964e6aded,false] 75608 --- [o-auto-1-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote https://github.com/omarvsoft/new-architecture-mock-up.git, the working tree is not clean.
+2017-03-23 19:45:36.682  INFO [configserver,b0d270c964e6aded,b0d270c964e6aded,false] 75608 --- [o-auto-1-exec-3] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@63e2c665: startup date [Thu Mar 23 19:45:36 AST 2017]; root of context hierarchy
+2017-03-23 19:45:36.692  INFO [configserver,b0d270c964e6aded,b0d270c964e6aded,false] 75608 --- [o-auto-1-exec-3] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@63e2c665: startup date [Thu Mar 23 19:45:36 AST 2017]; root of context hierarchy
+2017-03-23 19:45:36.756  INFO [configserver,3e9761a57bcb80e1,3e9761a57bcb80e1,false] 75608 --- [o-auto-1-exec-4] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote https://github.com/omarvsoft/new-architecture-mock-up.git, the working tree is not clean.
+2017-03-23 19:45:37.959  INFO [configserver,3e9761a57bcb80e1,3e9761a57bcb80e1,false] 75608 --- [o-auto-1-exec-4] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@30e438eb: startup date [Thu Mar 23 19:45:37 AST 2017]; root of context hierarchy
+2017-03-23 19:45:37.966  INFO [configserver,3e9761a57bcb80e1,3e9761a57bcb80e1,false] 75608 --- [o-auto-1-exec-4] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@30e438eb: startup date [Thu Mar 23 19:45:37 AST 2017]; root of context hierarchy
+```
+
 
 # ConfigServer Client
 
