@@ -1002,7 +1002,7 @@ curl –d {} localhost:9090/bus/refresh
 
 We can also refresh specific properties by setting the property name as a parameter.
 
--> IMPORTANT: In order to refresh the values the class must be marked as @RefreshScope and its attributes with @Value
+> **IMPORTANT**: In order to refresh the values the class must be marked as @RefreshScope and its attributes with @Value
 
 i.e.
 ```java
