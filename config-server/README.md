@@ -860,12 +860,12 @@ In order to enable sleuth the following configuration has been set.
 
 `pom.xml`
 ```XML
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-		</dependency>
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
 ```
-After added the dependency you will see in the console the trace ID and span ID
+After added the dependency you will see in the console the microservice name, trace ID and span ID
 
 ```shell
 2017-03-23 19:45:35.460  INFO [configserver,b0d270c964e6aded,b0d270c964e6aded,false] 75608 --- [o-auto-1-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote https://github.com/omarvsoft/new-architecture-mock-up.git, the working tree is not clean.
